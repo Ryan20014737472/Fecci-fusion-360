@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Projeto sobre o desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D com Autodesk Fusion 360.">
   <title>Desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D utilizando o Autodesk Fusion 360</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -36,11 +37,22 @@
           <span class="edition">EDIÇÃO 2026</span>
         </div>
       </div>
-      <div class="hero-art reveal" aria-hidden="true">
-        <span class="orbit orbit-one"></span>
-        <span class="orbit orbit-two"></span>
-        <div class="model"><span class="hole"></span></div>
-        <span class="axis">● &nbsp; X &nbsp; Y &nbsp; Z</span>
+      <div class="hero-art reveal">
+        <span class="orbit orbit-one" aria-hidden="true"></span>
+        <span class="orbit orbit-two" aria-hidden="true"></span>
+        <div
+          class="model-viewer"
+          data-model-viewer
+          tabindex="0"
+          role="group"
+          aria-label="Modelo 3D criado no Fusion 360"
+          aria-describedby="model-instructions"
+        >
+          <canvas class="model-canvas" aria-hidden="true"></canvas>
+          <p class="model-loading" role="status">Carregando modelo 3D…</p>
+          <p class="model-hint" id="model-instructions"><span aria-hidden="true">↻</span> Segure e arraste para girar</p>
+        </div>
+        <span class="axis" aria-hidden="true">● &nbsp; X &nbsp; Y &nbsp; Z</span>
       </div>
     </section>
 
@@ -280,6 +292,15 @@
     <div class="brand"><span class="brand-mark small">F</span><span>Projeto FECCI</span></div>
     <p>Em desenvolvimento pela nossa equipe • <span id="year">2026</span></p>
   </footer>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="model-viewer.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
