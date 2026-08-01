@@ -1,3 +1,4 @@
+/* Variáveis de cores utilizadas em todo o site */
 :root {
   --orange: #ff6a21;
   --ink: #090b0d;
@@ -6,6 +7,7 @@
   --line: rgba(255, 255, 255, 0.14);
 }
 
+/* Configurações globais e normalização dos elementos */
 * {
   box-sizing: border-box;
 }
@@ -16,6 +18,7 @@ html {
   scrollbar-color: var(--orange) #121416;
 }
 
+/* Personalização da barra de rolagem em navegadores WebKit */
 html::-webkit-scrollbar {
   width: 12px;
 }
@@ -52,6 +55,7 @@ a {
   text-decoration: none;
 }
 
+/* Cabeçalho fixo, marca do projeto e menu de navegação */
 .header {
   height: 82px;
   padding: 0 clamp(24px, 5vw, 76px);
@@ -115,6 +119,7 @@ a {
   margin: 6px;
 }
 
+/* Seção inicial com título, apresentação e chamada principal */
 .hero {
   min-height: 720px;
   padding: 160px clamp(24px, 6vw, 92px) 90px;
@@ -184,6 +189,7 @@ h1 em {
   letter-spacing: 0.12em;
 }
 
+/* Área visual decorativa que abriga o modelo tridimensional */
 .hero-art {
   min-height: 500px;
   position: relative;
@@ -213,6 +219,7 @@ h1 em {
   transform: rotate(48deg);
 }
 
+/* Visualizador interativo do arquivo STL */
 .model-viewer {
   width: min(100%, 560px);
   height: 500px;
@@ -316,6 +323,7 @@ h1 em {
   pointer-events: none;
 }
 
+/* Faixa de identificação e acesso ao Autodesk Fusion 360 */
 .fusion-bar {
   min-height: 104px;
   padding: 18px clamp(24px, 6vw, 92px);
@@ -372,11 +380,13 @@ h1 em {
   margin-left: auto;
 }
 
+/* Aparência compartilhada pelas seções de fundo claro */
 .light-section {
   background: var(--paper);
   color: #111;
 }
 
+/* Organização visual da seção Sobre o projeto */
 .project {
   padding: 110px clamp(24px, 7vw, 110px);
 }
@@ -487,6 +497,7 @@ h2 {
   letter-spacing: -0.02em;
 }
 
+/* Estrutura compartilhada pelas seções temáticas do projeto */
 .research,
 .process,
 .material,
@@ -519,6 +530,7 @@ h2 {
   line-height: 1.8;
 }
 
+/* Cartões que apresentam os artigos da fundamentação teórica */
 .article-grid {
   margin: 65px 0 0 90px;
   display: grid;
@@ -639,6 +651,7 @@ h2 {
   max-width: 260px;
 }
 
+/* Etapas e resumo da aplicação do minicurso */
 .process.light-section .steps {
   border-top-color: rgba(17, 17, 17, 0.18);
 }
@@ -684,6 +697,7 @@ h2 {
   font-size: 16px;
 }
 
+/* Conteúdo e painel do material de apoio */
 .material-layout {
   margin-left: 90px;
   display: grid;
@@ -838,6 +852,7 @@ h2 {
   line-height: 1.6;
 }
 
+/* Apresentação da equipe responsável pelo projeto */
 .team {
   padding: 100px clamp(24px, 7vw, 110px);
 }
@@ -875,6 +890,7 @@ h2 {
   line-height: 1.7;
 }
 
+/* Rodapé e identificação final do site */
 footer {
   padding: 32px clamp(24px, 5vw, 76px);
   border-top: 1px solid var(--line);
@@ -888,6 +904,7 @@ footer p {
   color: #707274;
 }
 
+/* Estado inicial e final das animações de entrada */
 .reveal {
   opacity: 0;
   transform: translateY(22px);
@@ -899,6 +916,7 @@ footer p {
   transform: none;
 }
 
+/* Ajustes para telas intermediárias e tablets */
 @media (max-width: 1050px) and (min-width: 801px) {
   .header {
     padding-inline: 28px;
@@ -910,6 +928,7 @@ footer p {
   }
 }
 
+/* Adaptação completa do layout para celulares */
 @media (max-width: 800px) {
   .menu-button {
     display: block;
@@ -1086,6 +1105,7 @@ footer p {
   }
 }
 
+/* Respeita a preferência por movimentos reduzidos do usuário */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
