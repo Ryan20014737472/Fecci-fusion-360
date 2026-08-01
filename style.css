@@ -189,13 +189,16 @@ h1 em {
   position: relative;
   display: grid;
   place-items: center;
-  perspective: 900px;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .orbit {
   position: absolute;
+  z-index: 0;
   border: 1px solid rgba(255, 106, 33, 0.26);
   border-radius: 50%;
+  pointer-events: none;
 }
 
 .orbit-one {
@@ -210,36 +213,107 @@ h1 em {
   transform: rotate(48deg);
 }
 
-.model {
-  width: 260px;
-  height: 260px;
-  border-radius: 46px;
+.model-viewer {
+  width: min(100%, 560px);
+  height: 500px;
   position: relative;
-  transform: rotateX(58deg) rotateZ(-42deg);
-  background: linear-gradient(135deg, #ff8b4f, #982b13);
-  box-shadow: inset -18px -12px 35px rgba(74, 11, 0, 0.4),
-    inset 10px 8px 18px rgba(255, 195, 148, 0.25),
-    30px 50px 35px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  outline: none;
+  background: radial-gradient(circle at 50% 46%, rgba(255, 106, 33, 0.1), transparent 61%);
 }
 
-.hole {
+.model-viewer.is-dragging {
+  cursor: grabbing;
+}
+
+.model-viewer:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -8px;
+  border-radius: 24px;
+}
+
+.model-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(22px 32px 24px rgba(0, 0, 0, 0.38));
+}
+
+.model-loading {
   position: absolute;
-  width: 104px;
-  height: 104px;
-  background: #171a1c;
-  border-radius: 50%;
-  left: 78px;
-  top: 78px;
-  box-shadow: inset 15px 15px 18px #050606,
-    0 0 0 9px rgba(255, 164, 110, 0.13);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: #9c9c9c;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.model-loading[hidden] {
+  display: none;
+}
+
+.model-loading.is-error {
+  padding-inline: 40px;
+  color: #ff9d6d;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.model-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  margin: 0;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d6d6d6;
+  background: rgba(16, 18, 20, 0.74);
+  border: 1px solid rgba(255, 106, 33, 0.28);
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 180ms ease, transform 180ms ease;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.model-hint span {
+  color: var(--orange);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.model-viewer.is-loaded .model-hint {
+  opacity: 0.68;
+}
+
+.model-viewer.is-loaded:hover .model-hint,
+.model-viewer.is-loaded:focus-visible .model-hint {
+  opacity: 1;
+  transform: translate(-50%, -3px);
 }
 
 .axis {
   position: absolute;
+  z-index: 2;
   bottom: 20px;
   right: 7%;
   color: #888;
   font: 10px monospace;
+  pointer-events: none;
 }
 
 .fusion-bar {
@@ -868,8 +942,13 @@ footer p {
     min-height: 390px;
   }
 
-  .model {
-    transform: scale(0.75) rotateX(58deg) rotateZ(-42deg);
+  .model-viewer {
+    height: 390px;
+  }
+
+  .model-hint {
+    bottom: 14px;
+    font-size: 9px;
   }
 
   .orbit-one {
@@ -1015,6 +1094,10 @@ footer p {
   .reveal {
     opacity: 1;
     transform: none;
+    transition: none;
+  }
+
+  .model-hint {
     transition: none;
   }
 }
