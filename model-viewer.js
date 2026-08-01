@@ -38,8 +38,8 @@ if (viewer) {
     controls.enablePan = false;
     controls.enableZoom = false;
     controls.rotateSpeed = 0.7;
-    controls.minPolarAngle = Math.PI * 0.16;
-    controls.maxPolarAngle = Math.PI * 0.84;
+    controls.minPolarAngle = 0;
+    controls.maxPolarAngle = Math.PI;
     controls.target.set(0, 0.05, 0);
     controls.update();
 
@@ -56,8 +56,8 @@ if (viewer) {
     scene.add(fillLight);
 
     const modelRoot = new THREE.Group();
-    modelRoot.rotation.y = -0.52;
-    modelRoot.rotation.z = 0.06;
+    modelRoot.rotation.y = 0;
+    modelRoot.rotation.z = 0;
     scene.add(modelRoot);
 
     const shadow = new THREE.Mesh(
@@ -253,10 +253,10 @@ if (viewer) {
           modelRoot.rotation.y += rotationStep;
           break;
         case 'ArrowUp':
-          modelRoot.rotation.x = Math.max(modelRoot.rotation.x - rotationStep, -1.1);
+          modelRoot.rotation.x -= rotationStep;
           break;
         case 'ArrowDown':
-          modelRoot.rotation.x = Math.min(modelRoot.rotation.x + rotationStep, 1.1);
+          modelRoot.rotation.x += rotationStep;
           break;
         default:
           handled = false;
