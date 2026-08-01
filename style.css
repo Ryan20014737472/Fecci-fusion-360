@@ -12,6 +12,32 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--orange) #121416;
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #121416;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 56px;
+  background: linear-gradient(180deg, #ff8b4f, var(--orange));
+  border: 3px solid #121416;
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #ff8240;
+}
+
+html::-webkit-scrollbar-corner {
+  background: #121416;
 }
 
 body {
@@ -234,17 +260,24 @@ h1 em {
 .fusion-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: #fff;
   color: #111;
-  padding: 8px 15px;
+  padding: 4px 15px 4px 6px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.fusion-logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
 .fusion-icon {
-  font-size: 37px;
-  font-weight: 900;
-  font-style: italic;
-  color: #ef5b22;
+  width: 58px;
+  height: 58px;
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
 .fusion-logo small,
