@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <!-- Metadados, título, fontes e recursos principais da página -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Projeto sobre o desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D com Autodesk Fusion 360.">
@@ -9,6 +10,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Cabeçalho fixo e navegação principal -->
   <header class="header">
     <a class="brand" href="#inicio" aria-label="Projeto FECCI - início">
       <span class="brand-mark">F</span>
@@ -26,7 +28,9 @@
     </nav>
   </header>
 
+  <!-- Conteúdo principal do site -->
   <main>
+    <!-- Apresentação inicial do projeto e visualizador do modelo 3D -->
     <section class="hero" id="inicio">
       <div class="hero-copy reveal">
         <p class="eyebrow">FECCI • PROJETO EM DESENVOLVIMENTO</p>
@@ -56,6 +60,7 @@
       </div>
     </section>
 
+    <!-- Faixa de identificação do Autodesk Fusion 360 -->
     <section class="fusion-bar">
       <p>PROJETADO COM</p>
       <a class="fusion-logo" href="https://www.autodesk.com/products/fusion-360/overview" target="_blank" rel="noopener noreferrer" aria-label="Conheça o Autodesk Fusion">
@@ -65,6 +70,7 @@
       <p class="tools">MODELAGEM 3D • SIMULAÇÃO • PROTOTIPAGEM</p>
     </section>
 
+    <!-- Explicação geral, motivação e objetivo do projeto -->
     <section class="project light-section" id="projeto">
       <div class="section-heading reveal">
         <span class="section-number">01</span>
@@ -101,6 +107,7 @@
       </div>
     </section>
 
+    <!-- Fundamentação teórica baseada nos três artigos estudados -->
     <section class="research" id="fundamentacao">
       <div class="section-heading reveal">
         <span class="section-number">02</span>
@@ -146,6 +153,7 @@
       </div>
     </section>
 
+    <!-- Etapas de preparação, aplicação e continuidade do minicurso -->
     <section class="process light-section" id="minicurso">
       <div class="section-heading reveal">
         <span class="section-number">03</span>
@@ -180,6 +188,7 @@
       </div>
     </section>
 
+    <!-- Apresentação do material de apoio produzido para a aula -->
     <section class="material" id="material">
       <div class="section-heading reveal">
         <span class="section-number">04</span>
@@ -203,6 +212,7 @@
       </div>
     </section>
 
+    <!-- Registros, análise e resultados da aplicação do projeto -->
     <section class="results light-section" id="resultados">
       <div class="section-heading reveal">
         <span class="section-number">05</span>
@@ -236,6 +246,7 @@
       </div>
     </section>
 
+    <!-- Referências bibliográficas utilizadas no trabalho -->
     <section class="references" id="referencias">
       <div class="section-heading reveal">
         <span class="section-number">06</span>
@@ -270,6 +281,7 @@
       </div>
     </section>
 
+    <!-- Área reservada para apresentação da equipe -->
     <section class="team light-section" id="equipe">
       <div class="section-heading reveal">
         <span class="section-number">07</span>
@@ -288,10 +300,12 @@
     </section>
   </main>
 
+  <!-- Rodapé com identificação e ano atualizado automaticamente -->
   <footer>
     <div class="brand"><span class="brand-mark small">F</span><span>Projeto FECCI</span></div>
     <p>Em desenvolvimento pela nossa equipe • <span id="year">2026</span></p>
   </footer>
+  <!-- Mapeamento dos módulos Three.js utilizados pelo visualizador -->
   <script type="importmap">
     {
       "imports": {
@@ -300,7 +314,9 @@
       }
     }
   </script>
+  <!-- Controla o carregamento e a interação com o modelo STL -->
   <script type="module" src="model-viewer.js?v=4"></script>
+  <!-- Controla o menu, as animações de entrada e o ano do rodapé -->
   <script src="script.js"></script>
 </body>
 </html>
