@@ -103,31 +103,106 @@ if (viewer) {
         const scale = 3.25 / largestDimension;
 
         const position = geometry.getAttribute('position');
-        const baseSurfaceZ = geometry.boundingBox.min.z + 3.05;
+        const triangleCount = position.count / 3;
+        const parents = new Int32Array(triangleCount);
+        const sharedVertices = new Map();
+
+        for (let triangle = 0; triangle < triangleCount; triangle += 1) {
+          parents[triangle] = triangle;
+        }
+
+        const findRoot = (triangle) => {
+          let root = triangle;
+
+          while (parents[root] !== root) {
+            root = parents[root];
+          }
+
+          while (parents[triangle] !== triangle) {
+            const next = parents[triangle];
+            parents[triangle] = root;
+            triangle = next;
+          }
+
+          return root;
+        };
+
+        const join = (first, second) => {
+          const firstRoot = findRoot(first);
+          const secondRoot = findRoot(second);
+
+          if (firstRoot !== secondRoot) {
+            parents[secondRoot] = firstRoot;
+          }
+        };
+
+        for (let vertex = 0; vertex < position.count; vertex += 1) {
+          const triangle = Math.floor(vertex / 3);
+          const vertexKey = [
+            position.getX(vertex).toFixed(4),
+            position.getY(vertex).toFixed(4),
+            position.getZ(vertex).toFixed(4)
+          ].join('|');
+
+          if (sharedVertices.has(vertexKey)) {
+            join(triangle, sharedVertices.get(vertexKey));
+          } else {
+            sharedVertices.set(vertexKey, triangle);
+          }
+        }
+
+        const componentBounds = new Map();
+
+        for (let triangle = 0; triangle < triangleCount; triangle += 1) {
+          const root = findRoot(triangle);
+
+          if (!componentBounds.has(root)) {
+            componentBounds.set(root, new THREE.Box3());
+          }
+
+          const bounds = componentBounds.get(root);
+
+          for (let offset = 0; offset < 3; offset += 1) {
+            const vertex = triangle * 3 + offset;
+            bounds.expandByPoint(new THREE.Vector3(
+              position.getX(vertex),
+              position.getY(vertex),
+              position.getZ(vertex)
+            ));
+          }
+        }
+
+        const componentMaterials = new Map();
+
+        componentBounds.forEach((bounds, root) => {
+          const dimensions = new THREE.Vector3();
+          bounds.getSize(dimensions);
+
+          const isOrangeBody =
+            dimensions.x > 50 &&
+            dimensions.y > 40 &&
+            dimensions.z > 40;
+
+          componentMaterials.set(root, isOrangeBody ? 0 : 1);
+        });
 
         geometry.clearGroups();
 
         let groupStart = 0;
-        let currentMaterial = null;
+        let currentMaterial = componentMaterials.get(findRoot(0));
 
-        for (let vertex = 0; vertex < position.count; vertex += 3) {
-          const highestPoint = Math.max(
-            position.getZ(vertex),
-            position.getZ(vertex + 1),
-            position.getZ(vertex + 2)
-          );
-          const materialIndex = highestPoint > baseSurfaceZ ? 1 : 0;
+        for (let triangle = 1; triangle < triangleCount; triangle += 1) {
+          const materialIndex = componentMaterials.get(findRoot(triangle));
+          const vertexStart = triangle * 3;
 
-          if (currentMaterial === null) {
-            currentMaterial = materialIndex;
-          } else if (materialIndex !== currentMaterial) {
-            geometry.addGroup(groupStart, vertex - groupStart, currentMaterial);
-            groupStart = vertex;
+          if (materialIndex !== currentMaterial) {
+            geometry.addGroup(groupStart, vertexStart - groupStart, currentMaterial);
+            groupStart = vertexStart;
             currentMaterial = materialIndex;
           }
         }
 
-        geometry.addGroup(groupStart, position.count - groupStart, currentMaterial ?? 0);
+        geometry.addGroup(groupStart, position.count - groupStart, currentMaterial);
 
         const orangeMaterial = new THREE.MeshStandardMaterial({
           color: 0xf2672b,
