@@ -1,13 +1,16 @@
+// Importa a biblioteca 3D, os controles de rotação e o carregador de arquivos STL
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
+// Localiza o visualizador presente na seção inicial da página
 const viewer = document.querySelector('[data-model-viewer]');
 
 if (viewer) {
   const canvas = viewer.querySelector('.model-canvas');
   const loadingMessage = viewer.querySelector('.model-loading');
 
+  // Mostra uma mensagem amigável caso o modelo não possa ser carregado
   const showError = () => {
     loadingMessage.hidden = false;
     loadingMessage.textContent = 'Não foi possível carregar o modelo 3D.';
@@ -15,10 +18,12 @@ if (viewer) {
   };
 
   try {
+    // Cria a cena e posiciona a câmera diante do modelo
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     camera.position.set(4.2, 2.8, 4.8);
 
+    // Configura a renderização com transparência, suavização e sombras
     const renderer = new THREE.WebGLRenderer({
       canvas,
       alpha: true,
@@ -33,6 +38,7 @@ if (viewer) {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+    // Permite girar o modelo livremente com mouse ou toque
     const controls = new OrbitControls(camera, canvas);
     controls.enableDamping = false;
     controls.enablePan = false;
@@ -43,6 +49,7 @@ if (viewer) {
     controls.target.set(0, 0.05, 0);
     controls.update();
 
+    // Adiciona iluminação ambiente e luzes direcionais para destacar o relevo
     scene.add(new THREE.HemisphereLight(0xfff2e7, 0x171a1c, 2.2));
 
     const keyLight = new THREE.DirectionalLight(0xffa05c, 4.5);
@@ -55,11 +62,13 @@ if (viewer) {
     fillLight.position.set(-4, 2, -3);
     scene.add(fillLight);
 
+    // Agrupa o modelo para controlar sua orientação inicial e rotação pelo teclado
     const modelRoot = new THREE.Group();
     modelRoot.rotation.y = 0;
     modelRoot.rotation.z = 0;
     scene.add(modelRoot);
 
+    // Cria uma sombra suave abaixo do objeto tridimensional
     const shadow = new THREE.Mesh(
       new THREE.CircleGeometry(2.25, 64),
       new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.28 })
@@ -69,12 +78,14 @@ if (viewer) {
     shadow.receiveShadow = true;
     scene.add(shadow);
 
+    // Renderiza novamente a cena somente quando alguma alteração acontece
     const render = () => {
       renderer.render(scene, camera);
     };
 
     controls.addEventListener('change', render);
 
+    // Ajusta a câmera e o canvas quando o tamanho da janela muda
     const resize = () => {
       const width = Math.max(viewer.clientWidth, 1);
       const height = Math.max(viewer.clientHeight, 1);
@@ -88,11 +99,13 @@ if (viewer) {
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(viewer);
 
+    // Prepara o carregamento do modelo criado no Fusion 360
     const loader = new STLLoader();
 
     loader.load(
       'assets/fusion.stl',
       (geometry) => {
+        // Calcula normais, centro, dimensões e escala proporcional da geometria
         geometry.computeVertexNormals();
         geometry.center();
         geometry.computeBoundingBox();
@@ -102,6 +115,7 @@ if (viewer) {
         const largestDimension = Math.max(size.x, size.y, size.z);
         const scale = 3.25 / largestDimension;
 
+        // Detecta os componentes conectados para separar o corpo laranja do F e do 360
         const position = geometry.getAttribute('position');
         const triangleCount = position.count / 3;
         const parents = new Int32Array(triangleCount);
@@ -204,6 +218,7 @@ if (viewer) {
 
         geometry.addGroup(groupStart, position.count - groupStart, currentMaterial);
 
+        // Define os materiais laranja e branco usados nas partes do modelo
         const orangeMaterial = new THREE.MeshStandardMaterial({
           color: 0xf2672b,
           metalness: 0.2,
@@ -216,6 +231,7 @@ if (viewer) {
           roughness: 0.3
         });
 
+        // Monta o modelo, corrige sua orientação e o adiciona à cena
         const mesh = new THREE.Mesh(geometry, [orangeMaterial, whiteMaterial]);
         mesh.scale.setScalar(scale);
         mesh.rotation.x = Math.PI / 2;
@@ -231,6 +247,7 @@ if (viewer) {
       showError
     );
 
+    // Altera o cursor enquanto o visitante segura e arrasta o modelo
     viewer.addEventListener('pointerdown', () => {
       viewer.classList.add('is-dragging');
     });
@@ -239,6 +256,7 @@ if (viewer) {
       viewer.classList.remove('is-dragging');
     });
 
+    // Oferece rotação completa também pelas setas do teclado
     viewer.addEventListener('keydown', (event) => {
       if (!modelRoot.children.length) return;
 
@@ -268,6 +286,7 @@ if (viewer) {
       }
     });
 
+    // Executa o primeiro ajuste antes de exibir o visualizador
     resize();
   } catch (error) {
     showError();
