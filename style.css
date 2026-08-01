@@ -457,7 +457,7 @@ h2 {
 .article-card {
   position: relative;
   min-height: 330px;
-  padding: 34px 30px 64px;
+  padding: 34px 30px 82px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -504,6 +504,33 @@ h2 {
   position: absolute;
   left: 30px;
   bottom: 30px;
+}
+
+.article-link {
+  position: absolute;
+  left: 30px;
+  bottom: 28px;
+  min-height: 36px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid rgba(255, 106, 33, 0.55);
+  color: var(--orange);
+  font: 700 10px monospace;
+  letter-spacing: 0.12em;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.article-link:hover {
+  background: var(--orange);
+  color: #111;
+  transform: translateY(-2px);
+}
+
+.article-link:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
 }
 
 .steps {
