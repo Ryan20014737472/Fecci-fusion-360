@@ -102,13 +102,46 @@ if (viewer) {
         const largestDimension = Math.max(size.x, size.y, size.z);
         const scale = 3.25 / largestDimension;
 
-        const material = new THREE.MeshStandardMaterial({
+        const position = geometry.getAttribute('position');
+        const baseSurfaceZ = geometry.boundingBox.min.z + 3.05;
+
+        geometry.clearGroups();
+
+        let groupStart = 0;
+        let currentMaterial = null;
+
+        for (let vertex = 0; vertex < position.count; vertex += 3) {
+          const highestPoint = Math.max(
+            position.getZ(vertex),
+            position.getZ(vertex + 1),
+            position.getZ(vertex + 2)
+          );
+          const materialIndex = highestPoint > baseSurfaceZ ? 1 : 0;
+
+          if (currentMaterial === null) {
+            currentMaterial = materialIndex;
+          } else if (materialIndex !== currentMaterial) {
+            geometry.addGroup(groupStart, vertex - groupStart, currentMaterial);
+            groupStart = vertex;
+            currentMaterial = materialIndex;
+          }
+        }
+
+        geometry.addGroup(groupStart, position.count - groupStart, currentMaterial ?? 0);
+
+        const orangeMaterial = new THREE.MeshStandardMaterial({
           color: 0xf2672b,
           metalness: 0.2,
           roughness: 0.34
         });
 
-        const mesh = new THREE.Mesh(geometry, material);
+        const whiteMaterial = new THREE.MeshStandardMaterial({
+          color: 0xfffaf5,
+          metalness: 0.08,
+          roughness: 0.3
+        });
+
+        const mesh = new THREE.Mesh(geometry, [orangeMaterial, whiteMaterial]);
         mesh.scale.setScalar(scale);
         mesh.rotation.x = -Math.PI / 2;
         mesh.castShadow = true;
