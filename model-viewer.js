@@ -1,0 +1,167 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+
+const viewer = document.querySelector('[data-model-viewer]');
+
+if (viewer) {
+  const canvas = viewer.querySelector('.model-canvas');
+  const loadingMessage = viewer.querySelector('.model-loading');
+
+  const showError = () => {
+    loadingMessage.hidden = false;
+    loadingMessage.textContent = 'Não foi possível carregar o modelo 3D.';
+    loadingMessage.classList.add('is-error');
+  };
+
+  try {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    camera.position.set(4.2, 2.8, 4.8);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = false;
+    controls.enablePan = false;
+    controls.enableZoom = false;
+    controls.rotateSpeed = 0.7;
+    controls.minPolarAngle = Math.PI * 0.16;
+    controls.maxPolarAngle = Math.PI * 0.84;
+    controls.target.set(0, 0.05, 0);
+    controls.update();
+
+    scene.add(new THREE.HemisphereLight(0xfff2e7, 0x171a1c, 2.2));
+
+    const keyLight = new THREE.DirectionalLight(0xffa05c, 4.5);
+    keyLight.position.set(4, 6, 5);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(1024, 1024);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x91b7ff, 1.15);
+    fillLight.position.set(-4, 2, -3);
+    scene.add(fillLight);
+
+    const modelRoot = new THREE.Group();
+    modelRoot.rotation.y = -0.52;
+    modelRoot.rotation.z = 0.06;
+    scene.add(modelRoot);
+
+    const shadow = new THREE.Mesh(
+      new THREE.CircleGeometry(2.25, 64),
+      new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.28 })
+    );
+    shadow.rotation.x = -Math.PI / 2;
+    shadow.position.y = -1.42;
+    shadow.receiveShadow = true;
+    scene.add(shadow);
+
+    const render = () => {
+      renderer.render(scene, camera);
+    };
+
+    controls.addEventListener('change', render);
+
+    const resize = () => {
+      const width = Math.max(viewer.clientWidth, 1);
+      const height = Math.max(viewer.clientHeight, 1);
+
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height, false);
+      render();
+    };
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(viewer);
+
+    const loader = new STLLoader();
+
+    loader.load(
+      'assets/fusion.stl',
+      (geometry) => {
+        geometry.computeVertexNormals();
+        geometry.center();
+        geometry.computeBoundingBox();
+
+        const size = new THREE.Vector3();
+        geometry.boundingBox.getSize(size);
+        const largestDimension = Math.max(size.x, size.y, size.z);
+        const scale = 3.25 / largestDimension;
+
+        const material = new THREE.MeshStandardMaterial({
+          color: 0xf2672b,
+          metalness: 0.2,
+          roughness: 0.34
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.scale.setScalar(scale);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        modelRoot.add(mesh);
+
+        loadingMessage.hidden = true;
+        viewer.classList.add('is-loaded');
+        render();
+      },
+      undefined,
+      showError
+    );
+
+    viewer.addEventListener('pointerdown', () => {
+      viewer.classList.add('is-dragging');
+    });
+
+    window.addEventListener('pointerup', () => {
+      viewer.classList.remove('is-dragging');
+    });
+
+    viewer.addEventListener('keydown', (event) => {
+      if (!modelRoot.children.length) return;
+
+      const rotationStep = 0.12;
+      let handled = true;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          modelRoot.rotation.y -= rotationStep;
+          break;
+        case 'ArrowRight':
+          modelRoot.rotation.y += rotationStep;
+          break;
+        case 'ArrowUp':
+          modelRoot.rotation.x = Math.max(modelRoot.rotation.x - rotationStep, -1.1);
+          break;
+        case 'ArrowDown':
+          modelRoot.rotation.x = Math.min(modelRoot.rotation.x + rotationStep, 1.1);
+          break;
+        default:
+          handled = false;
+      }
+
+      if (handled) {
+        event.preventDefault();
+        render();
+      }
+    });
+
+    resize();
+  } catch (error) {
+    showError();
+  }
+}
