@@ -291,12 +291,93 @@ h2 {
   margin: 18px 0 65px;
 }
 
-.project-text-space {
+.project-story {
   margin-left: 90px;
-  min-height: 240px;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.4fr);
+  gap: clamp(45px, 7vw, 110px);
+  max-width: 1180px;
   border-top: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.project-intro {
+  padding-top: 36px;
+}
+
+.project-label {
+  margin: 0 0 26px;
+  color: #b84d18;
+  font: 700 11px monospace;
+  letter-spacing: 0.17em;
+}
+
+.project-lead {
+  margin: 0;
+  color: #111;
+  font-size: clamp(24px, 2.25vw, 35px);
+  line-height: 1.35;
+  letter-spacing: -0.03em;
+}
+
+.project-path {
+  border-left: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.65fr) 1fr;
+  gap: 34px;
+  padding: 36px 0 40px 44px;
   border-bottom: 1px solid rgba(17, 17, 17, 0.18);
-  max-width: 1050px;
+}
+
+.project-card-heading span,
+.project-goal > span {
+  color: #b84d18;
+  font: 700 10px monospace;
+  letter-spacing: 0.16em;
+}
+
+.project-card h3 {
+  margin: 16px 0 0;
+  font-size: 23px;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.project-card > p {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.project-goal {
+  position: relative;
+  margin: 34px 0 0 44px;
+  padding: 34px 36px 38px;
+  overflow: hidden;
+  background: #111;
+  color: #fff;
+}
+
+.project-goal::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--orange);
+}
+
+.project-goal > span {
+  color: var(--orange);
+}
+
+.project-goal p {
+  margin: 18px 0 0;
+  font-size: clamp(19px, 1.7vw, 25px);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
 }
 
 .process {
@@ -434,9 +515,33 @@ footer p {
     grid-template-columns: 50px 1fr;
   }
 
-  .project-text-space {
-    margin-left: 50px;
-    min-height: 200px;
+  .project-story {
+    margin-left: 0;
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .project-intro {
+    padding-top: 30px;
+  }
+
+  .project-path {
+    border-left: 0;
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 28px 0;
+  }
+
+  .project-card h3 {
+    margin-top: 10px;
+  }
+
+  .project-goal {
+    margin: 24px 0 0;
+    padding: 30px 28px 32px;
   }
 
   .steps {
