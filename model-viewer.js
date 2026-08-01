@@ -218,7 +218,7 @@ if (viewer) {
 
         const mesh = new THREE.Mesh(geometry, [orangeMaterial, whiteMaterial]);
         mesh.scale.setScalar(scale);
-        mesh.rotation.x = -Math.PI / 2;
+        mesh.rotation.x = Math.PI / 2;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
         modelRoot.add(mesh);
