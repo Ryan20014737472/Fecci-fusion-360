@@ -195,7 +195,6 @@ h1 em {
 
 /* Área visual decorativa que abriga o modelo tridimensional */
 .hero-art {
-  overflow: hidden;
   min-height: 500px;
   position: relative;
   display: grid;
