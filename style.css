@@ -13,6 +13,8 @@
 }
 
 html {
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: var(--orange) #121416;
@@ -44,7 +46,9 @@ html::-webkit-scrollbar-corner {
 }
 
 body {
+  max-width: 100%;
   margin: 0;
+  overflow-x: hidden;
   background: var(--ink);
   color: #fff;
   font-family: Arial, Helvetica, sans-serif;
@@ -191,6 +195,7 @@ h1 em {
 
 /* Área visual decorativa que abriga o modelo tridimensional */
 .hero-art {
+  overflow: hidden;
   min-height: 500px;
   position: relative;
   display: grid;
@@ -861,10 +866,13 @@ h2 {
 
 .result-photo {
   position: relative;
+  align-self: center;
+  width: calc(100% - 48px);
   min-width: 0;
-  min-height: 360px;
-  margin: 0;
+  aspect-ratio: 16 / 10;
+  margin: 24px;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   background: #202326;
 }
 
@@ -1246,7 +1254,9 @@ footer p {
   }
 
   .result-photo {
+    width: calc(100% - 40px);
     min-height: 0;
+    margin: 20px;
     aspect-ratio: 16 / 9;
   }
 
