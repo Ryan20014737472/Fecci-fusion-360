@@ -804,20 +804,21 @@ h2 {
 .result-grid {
   margin-left: 90px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   max-width: 1180px;
   border-top: 1px solid rgba(17, 17, 17, 0.18);
   border-left: 1px solid rgba(17, 17, 17, 0.18);
 }
 
 .result-card {
-  min-height: 310px;
+  min-height: 290px;
   padding: 34px 30px;
   border-right: 1px solid rgba(17, 17, 17, 0.18);
   border-bottom: 1px solid rgba(17, 17, 17, 0.18);
 }
 
-.result-card > span {
+.result-card > span,
+.result-featured-copy > span {
   color: #b84d18;
 }
 
@@ -839,12 +840,77 @@ h2 {
   color: #fff;
 }
 
-.result-card-accent > span {
+.result-card-accent > span,
+.result-card-accent .result-featured-copy > span {
   color: var(--orange);
 }
 
 .result-card-accent p {
-  color: #a8aaab;
+  color: #b7b9ba;
+}
+
+/* Resultado em destaque com registro fotográfico da capacitação */
+.result-card-featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  min-height: 460px;
+  padding: 0;
+}
+
+.result-photo {
+  position: relative;
+  min-height: 460px;
+  margin: 0;
+  overflow: hidden;
+  background: #202326;
+}
+
+.result-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.result-card-featured:hover .result-photo img {
+  transform: scale(1.018);
+  filter: contrast(1.03) saturate(1.03);
+}
+
+.result-photo figcaption {
+  position: absolute;
+  left: 22px;
+  bottom: 20px;
+  max-width: calc(100% - 44px);
+  padding: 8px 10px;
+  background: rgba(9, 11, 13, 0.82);
+  color: #e5e5e2;
+  font: 700 9px monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.result-featured-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(36px, 5vw, 64px);
+}
+
+.result-featured-copy h3 {
+  margin: 34px 0 22px;
+  font-size: clamp(30px, 3.2vw, 48px);
+}
+
+.result-featured-copy p {
+  font-size: 15px;
+  line-height: 1.85;
+}
+
+.result-card-secondary h3 {
+  margin-top: 38px;
 }
 
 .result-note {
@@ -1163,6 +1229,24 @@ footer p {
   .article-card,
   .result-card {
     min-height: 0;
+  }
+
+  .result-card-featured {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .result-photo {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .result-featured-copy {
+    padding: 34px 28px 40px;
+  }
+
+  .result-featured-copy h3 {
+    margin-top: 28px;
   }
 
   .course-summary {
