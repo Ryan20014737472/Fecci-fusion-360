@@ -7,7 +7,7 @@
   <meta name="description" content="Projeto sobre o desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D com Autodesk Fusion 360.">
   <title>Desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D utilizando o Autodesk Fusion 360</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <!-- Cabeçalho fixo e navegação principal -->
@@ -311,17 +311,33 @@
           <p class="team-caption">Conheça quem participou do desenvolvimento do projeto.</p>
         </div>
 
-        <!-- Cartão individual do participante -->
-        <article class="participant-card">
-          <figure class="participant-photo">
-            <img src="assets/participantes/Ryan.jpeg" alt="Foto do participante Ryan Batistel" loading="lazy">
-          </figure>
-          <div class="participant-info">
-            <span>PARTICIPANTE 01</span>
-            <h3>Ryan Batistel</h3>
-            <p class="participant-description">Criador e coordenador do projeto, responsável pelo desenvolvimento e aplicação das aulas, além de contribuir com o design e a identidade visual do site.</p>
-          </div>
-        </article>
+        <!-- Lista de participantes do projeto -->
+        <div class="participant-list">
+          <!-- Cartão individual do primeiro participante -->
+          <article class="participant-card" data-participant-number="01">
+            <figure class="participant-photo">
+              <img src="assets/participantes/Ryan.jpeg" alt="Foto do participante Ryan Batistel" loading="lazy">
+            </figure>
+            <div class="participant-info">
+              <span>PARTICIPANTE 01</span>
+              <h3>Ryan Batistel</h3>
+              <p class="participant-description">Criador e coordenador do projeto, responsável pelo desenvolvimento e aplicação das aulas, além de contribuir com o design e a identidade visual do site.</p>
+            </div>
+          </article>
+
+          <!-- Cartão individual do segundo participante; a foto poderá ser adicionada depois -->
+          <article class="participant-card" data-participant-number="02">
+            <div class="participant-photo participant-photo-placeholder" role="img" aria-label="Foto de Renan Decker ainda não adicionada">
+              <span aria-hidden="true">RD</span>
+            </div>
+            <div class="participant-info">
+              <span>PARTICIPANTE 02</span>
+              <h3>Renan Decker</h3>
+              <!-- Espaço reservado para a descrição do participante -->
+              <p class="participant-description participant-description-empty">Descrição a adicionar.</p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
   </main>
