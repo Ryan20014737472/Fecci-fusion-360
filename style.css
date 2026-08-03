@@ -1025,6 +1025,22 @@ h2 {
 /* Centraliza o técnico na parte superior da formação em pirâmide */
 .participant-card-lead {
   grid-column: 2;
+  grid-row: 1;
+}
+
+.participant-card-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.participant-card-center {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.participant-card-right {
+  grid-column: 3;
+  grid-row: 2;
 }
 
 /* Mantém os cartões compactos para formar três colunas na base */
@@ -1393,8 +1409,12 @@ footer p {
     grid-template-columns: 1fr;
   }
 
-  .participant-card-lead {
+  .participant-card-lead,
+  .participant-card-left,
+  .participant-card-center,
+  .participant-card-right {
     grid-column: auto;
+    grid-row: auto;
   }
 
   .participant-card {
