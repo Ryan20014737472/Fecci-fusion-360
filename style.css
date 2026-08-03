@@ -1018,8 +1018,28 @@ h2 {
 .participant-list {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
+}
+
+/* Centraliza o técnico na parte superior da formação em pirâmide */
+.participant-card-lead {
+  grid-column: 2;
+}
+
+/* Mantém os cartões compactos para formar três colunas na base */
+.participant-list .participant-card {
+  grid-template-columns: 1fr;
+  min-height: 0;
+}
+
+.participant-list .participant-photo {
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+}
+
+.participant-list .participant-info {
+  min-height: 310px;
 }
 
 /* Cartão editorial com foto, nome e descrição do participante */
@@ -1371,6 +1391,10 @@ footer p {
 
   .participant-list {
     grid-template-columns: 1fr;
+  }
+
+  .participant-card-lead {
+    grid-column: auto;
   }
 
   .participant-card {
