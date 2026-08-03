@@ -506,6 +506,7 @@ h2 {
 .process,
 .material,
 .results,
+.fecci-article,
 .references {
   padding: 110px clamp(24px, 7vw, 110px);
 }
@@ -946,6 +947,87 @@ h2 {
   line-height: 1.6;
 }
 
+/* Destaque para o artigo autoral apresentado na FECCI */
+.fecci-article-card {
+  margin-left: 90px;
+  display: grid;
+  grid-template-columns: minmax(300px, 1.15fr) minmax(280px, 0.85fr);
+  max-width: 1180px;
+  border: 1px solid var(--line);
+  background: #17191b;
+}
+
+.fecci-article-intro,
+.fecci-article-summary {
+  padding: clamp(32px, 5vw, 62px);
+}
+
+.fecci-article-intro {
+  border-right: 1px solid var(--line);
+}
+
+.fecci-article-intro > span,
+.fecci-article-summary > span {
+  color: var(--orange);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.fecci-article-intro h3 {
+  margin: 28px 0 24px;
+  font-size: clamp(30px, 3.4vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+}
+
+.fecci-article-authors {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.fecci-article-guidance {
+  margin: 14px 0 0;
+  color: #8f9293;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.fecci-article-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.fecci-article-summary > p {
+  margin: 0;
+  color: #b9bbbc;
+  line-height: 1.85;
+}
+
+.fecci-article-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+
+.fecci-download {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.fecci-download:hover {
+  color: var(--orange);
+}
+
 .reference-list {
   margin-left: 90px;
   max-width: 1120px;
@@ -1293,10 +1375,20 @@ footer p {
 
   .research-intro,
   .material-layout,
+  .fecci-article-card,
   .team-content {
     margin-left: 0;
     grid-template-columns: 1fr;
     gap: 30px;
+  }
+
+  .fecci-article-card {
+    grid-template-columns: 1fr;
+  }
+
+  .fecci-article-intro {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .article-grid,
