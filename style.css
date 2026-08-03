@@ -1014,8 +1014,17 @@ h2 {
   line-height: 1.7;
 }
 
+/* Grade que organiza os cartões de todos os participantes */
+.participant-list {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
 /* Cartão editorial com foto, nome e descrição do participante */
 .participant-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(180px, 0.86fr) minmax(230px, 1fr);
   min-height: 390px;
@@ -1054,6 +1063,22 @@ h2 {
   filter: saturate(1) contrast(1.03);
 }
 
+/* Marcador temporário exibido enquanto a foto do participante não foi enviada */
+.participant-photo-placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(238, 101, 46, 0.3), transparent 38%),
+    #17191b;
+}
+
+.participant-photo-placeholder span {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: clamp(54px, 7vw, 90px);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+}
+
 .participant-info {
   position: relative;
   display: flex;
@@ -1062,8 +1087,8 @@ h2 {
   padding: clamp(28px, 4vw, 48px);
 }
 
-.participant-info::before {
-  content: "01";
+.participant-card::before {
+  content: attr(data-participant-number);
   position: absolute;
   top: 24px;
   right: 28px;
@@ -1095,6 +1120,12 @@ h2 {
   border-top: 1px solid rgba(17, 17, 17, 0.18);
   color: #555;
   line-height: 1.65;
+}
+
+/* Indica de forma discreta onde a descrição do participante será inserida */
+.participant-description-empty {
+  color: #8a8882;
+  font-style: italic;
 }
 
 /* Rodapé e identificação final do site */
@@ -1336,6 +1367,10 @@ footer p {
 
   .team-intro {
     gap: 18px;
+  }
+
+  .participant-list {
+    grid-template-columns: 1fr;
   }
 
   .participant-card {
