@@ -65,8 +65,9 @@ if (viewer) {
 
     // Agrupa o modelo para controlar sua orientação inicial e rotação pelo teclado
     const modelRoot = new THREE.Group();
-    modelRoot.rotation.y = 0;
-    modelRoot.rotation.z = 0;
+    // Troca as faces superior e frontal para iniciar com F em cima e 360 à frente
+    const initialRotationAxis = new THREE.Vector3(0, 1, 1).normalize();
+    modelRoot.quaternion.setFromAxisAngle(initialRotationAxis, Math.PI);
     scene.add(modelRoot);
 
     // Cria uma sombra suave abaixo do objeto tridimensional
