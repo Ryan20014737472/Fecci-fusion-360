@@ -21,7 +21,8 @@ if (viewer) {
     // Cria a cena e posiciona a câmera diante do modelo
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(4.2, 2.8, 4.8);
+    // Centraliza a câmera diante do 360 e mantém o F visível na face superior
+    camera.position.set(0, 3.4, 6.1);
 
     // Configura a renderização com transparência, suavização e sombras
     const renderer = new THREE.WebGLRenderer({
