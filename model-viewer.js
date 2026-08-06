@@ -45,6 +45,7 @@ if (viewer) {
     controls.enablePan = false;
     controls.enableZoom = false;
     controls.rotateSpeed = 0.7;
+    controls.autoRotateSpeed = 1.15;
     controls.minPolarAngle = 0;
     controls.maxPolarAngle = Math.PI;
     controls.target.set(0, 0.05, 0);
@@ -70,6 +71,17 @@ if (viewer) {
     modelRoot.quaternion.setFromAxisAngle(initialRotationAxis, Math.PI);
     scene.add(modelRoot);
 
+    // Guarda a posição de apresentação para restaurá-la após alguns segundos sem interação
+    const initialCameraPosition = camera.position.clone();
+    const initialTarget = controls.target.clone();
+    const initialModelQuaternion = modelRoot.quaternion.clone();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const idleDelay = 5000;
+    const returnDuration = 850;
+    let idleTimer;
+    let returnAnimationFrame;
+    let modelReady = false;
+
     // Cria uma sombra suave abaixo do objeto tridimensional
     const shadow = new THREE.Mesh(
       new THREE.CircleGeometry(2.25, 64),
@@ -80,12 +92,84 @@ if (viewer) {
     shadow.receiveShadow = true;
     scene.add(shadow);
 
-    // Renderiza novamente a cena somente quando alguma alteração acontece
+    // Renderiza a cena continuamente para permitir a rotação automática suave
     const render = () => {
       renderer.render(scene, camera);
     };
 
-    controls.addEventListener('change', render);
+    const animate = () => {
+      if (modelReady && controls.autoRotate) {
+        controls.update();
+      }
+
+      render();
+      window.requestAnimationFrame(animate);
+    };
+
+    // Interrompe o giro automático assim que o visitante começa a manipular a peça
+    const stopAutomaticRotation = () => {
+      window.clearTimeout(idleTimer);
+      window.cancelAnimationFrame(returnAnimationFrame);
+      controls.autoRotate = false;
+      controls.enabled = true;
+    };
+
+    // Retorna suavemente ao enquadramento inicial e reinicia o giro automático
+    const returnToInitialPosition = () => {
+      if (!modelReady) return;
+
+      const startingCameraPosition = camera.position.clone();
+      const startingTarget = controls.target.clone();
+      const startingModelQuaternion = modelRoot.quaternion.clone();
+      const startedAt = performance.now();
+
+      controls.autoRotate = false;
+      controls.enabled = false;
+
+      const updateReturn = (currentTime) => {
+        const progress = Math.min((currentTime - startedAt) / returnDuration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+        camera.position.lerpVectors(
+          startingCameraPosition,
+          initialCameraPosition,
+          easedProgress
+        );
+        controls.target.lerpVectors(startingTarget, initialTarget, easedProgress);
+        modelRoot.quaternion.slerpQuaternions(
+          startingModelQuaternion,
+          initialModelQuaternion,
+          easedProgress
+        );
+        controls.update();
+
+        if (progress < 1) {
+          returnAnimationFrame = window.requestAnimationFrame(updateReturn);
+        } else {
+          controls.enabled = true;
+          controls.autoRotate = !prefersReducedMotion;
+        }
+      };
+
+      if (prefersReducedMotion) {
+        camera.position.copy(initialCameraPosition);
+        controls.target.copy(initialTarget);
+        modelRoot.quaternion.copy(initialModelQuaternion);
+        controls.enabled = true;
+        controls.update();
+        return;
+      }
+
+      returnAnimationFrame = window.requestAnimationFrame(updateReturn);
+    };
+
+    const scheduleAutomaticRotation = () => {
+      window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(returnToInitialPosition, idleDelay);
+    };
+
+    controls.addEventListener('start', stopAutomaticRotation);
+    controls.addEventListener('end', scheduleAutomaticRotation);
 
     // Ajusta a câmera e o canvas quando o tamanho da janela muda
     const resize = () => {
@@ -243,6 +327,8 @@ if (viewer) {
 
         loadingMessage.hidden = true;
         viewer.classList.add('is-loaded');
+        modelReady = true;
+        controls.autoRotate = !prefersReducedMotion;
         render();
       },
       undefined,
@@ -251,6 +337,7 @@ if (viewer) {
 
     // Altera o cursor enquanto o visitante segura e arrasta o modelo
     viewer.addEventListener('pointerdown', () => {
+      stopAutomaticRotation();
       viewer.classList.add('is-dragging');
     });
 
@@ -284,12 +371,15 @@ if (viewer) {
 
       if (handled) {
         event.preventDefault();
+        stopAutomaticRotation();
         render();
+        scheduleAutomaticRotation();
       }
     });
 
-    // Executa o primeiro ajuste antes de exibir o visualizador
+    // Executa o primeiro ajuste e inicia o ciclo de animação do visualizador
     resize();
+    animate();
   } catch (error) {
     showError();
   }
