@@ -99,8 +99,8 @@ a {
 
 /* Logo compacta do Clube Maker posicionada ao lado do título */
 .brand-club-logo {
-  width: 36px;
-  height: 36px;
+  width: 60px;
+  height: 60px;
   margin-left: -2px;
   display: grid;
   flex: 0 0 auto;
