@@ -97,29 +97,22 @@ a {
   font-size: 13px;
 }
 
-/* Selo institucional do Clube Maker exibido no cabeçalho */
-.club-logo-link {
-  width: 104px;
-  height: 54px;
-  margin-left: auto;
-  margin-right: clamp(18px, 2.5vw, 38px);
-  padding: 5px 10px;
+/* Logo compacta do Clube Maker posicionada ao lado do título */
+.brand-club-logo {
+  width: 38px;
+  height: 38px;
+  margin-left: 4px;
+  padding: 3px;
   display: grid;
+  flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(255, 106, 33, 0.5);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 106, 33, 0.45);
+  border-radius: 9px;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.club-logo-link:hover {
-  transform: translateY(-2px);
-  border-color: var(--orange);
-}
-
-.club-logo-link img {
+.brand-club-logo img {
   width: 100%;
   height: 100%;
   display: block;
@@ -1307,11 +1300,6 @@ footer p {
     padding-inline: 28px;
   }
 
-  .club-logo-link {
-    width: 82px;
-    margin-right: 18px;
-  }
-
   .nav {
     gap: 16px;
     font-size: 12px;
@@ -1320,13 +1308,13 @@ footer p {
 
 /* Adaptação completa do layout para celulares */
 @media (max-width: 800px) {
-  .club-logo-link {
-    width: 62px;
-    height: 42px;
-    margin-left: auto;
-    margin-right: 4px;
-    padding: 4px 6px;
-    border-radius: 9px;
+  /* Mantém a logo legível sem ocupar espaço excessivo no celular */
+  .brand-club-logo {
+    width: 32px;
+    height: 32px;
+    margin-left: 0;
+    padding: 2px;
+    border-radius: 7px;
   }
 
   .menu-button {
