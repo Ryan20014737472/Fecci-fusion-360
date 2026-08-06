@@ -99,9 +99,9 @@ a {
 
 /* Logo compacta do Clube Maker posicionada ao lado do título */
 .brand-club-logo {
-  width: 27px;
-  height: 27px;
-  margin-left: -3px;
+  width: 36px;
+  height: 36px;
+  margin-left: -2px;
   display: grid;
   flex: 0 0 auto;
   place-items: center;
@@ -1306,9 +1306,9 @@ footer p {
 @media (max-width: 800px) {
   /* Mantém a logo legível sem ocupar espaço excessivo no celular */
   .brand-club-logo {
-    width: 25px;
-    height: 25px;
-    margin-left: -4px;
+    width: 31px;
+    height: 31px;
+    margin-left: -3px;
   }
 
   .menu-button {
