@@ -929,6 +929,22 @@ h2 {
   transition: transform 0.6s ease, filter 0.6s ease;
 }
 
+/* Espaço temporário para registros fotográficos que serão adicionados depois */
+.result-photo-placeholder {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 106, 33, 0.28), transparent 38%),
+    #202326;
+}
+
+.result-photo-placeholder > span {
+  color: rgba(255, 255, 255, 0.82);
+  font: 800 11px monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
 .result-card-featured:hover .result-photo img {
   transform: scale(1.018);
   filter: contrast(1.03) saturate(1.03);
