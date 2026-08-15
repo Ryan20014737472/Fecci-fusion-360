@@ -72,6 +72,12 @@ a {
   z-index: 5;
 }
 
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -106,6 +112,18 @@ a {
   flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
+  border-radius: 50%;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.brand-club-logo:hover {
+  transform: translateY(-2px) scale(1.04);
+  filter: brightness(1.08);
+}
+
+.brand-club-logo:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
 }
 
 .brand-club-logo img {
@@ -1482,6 +1500,11 @@ footer p {
   .header {
     height: 78px;
     padding-inline: 18px;
+  }
+
+  .brand-group {
+    min-width: 0;
+    gap: 9px;
   }
 
   .brand {
