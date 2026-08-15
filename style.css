@@ -1126,6 +1126,44 @@ h2 {
   line-height: 1.6;
 }
 
+/* Links dos títulos e identificadores DOI das referências */
+.reference-title-link {
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 106, 33, 0.42);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.reference-title-link:hover,
+.reference-title-link:focus-visible {
+  color: var(--orange);
+  text-decoration-color: var(--orange);
+  outline: none;
+}
+
+.reference-doi {
+  color: #c7c9ca;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 106, 33, 0.5);
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+  transition: color 0.2s ease;
+}
+
+.reference-doi:hover,
+.reference-doi:focus-visible {
+  color: var(--orange);
+  outline: none;
+}
+
+.reference-title-link::after,
+.reference-doi::after {
+  content: " ↗";
+  color: var(--orange);
+  font-size: 0.72em;
+}
+
 /* Apresentação da equipe responsável pelo projeto */
 .team {
   padding: 100px clamp(24px, 7vw, 110px);
