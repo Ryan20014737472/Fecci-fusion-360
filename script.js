@@ -31,3 +31,55 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 // Mantém o ano apresentado no rodapé sempre atualizado
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// Permite abrir as imagens dos resultados em tamanho ampliado
+const lightbox = document.getElementById('image-lightbox');
+const lightboxImage = lightbox.querySelector('img');
+const lightboxCaption = lightbox.querySelector('.image-lightbox-caption');
+const lightboxClose = lightbox.querySelector('.image-lightbox-close');
+let lastFocusedImage = null;
+
+// Abre a imagem original e mantém sua descrição acessível
+function openLightbox(image) {
+  const caption = image.closest('figure')?.querySelector('figcaption')?.textContent || image.alt;
+  lastFocusedImage = image;
+  lightboxImage.src = image.currentSrc || image.src;
+  lightboxImage.alt = image.alt;
+  lightboxCaption.textContent = caption;
+  lightbox.hidden = false;
+  document.body.classList.add('lightbox-open');
+  lightboxClose.focus();
+}
+
+// Fecha a visualização e devolve o foco para a imagem escolhida
+function closeLightbox() {
+  lightbox.hidden = true;
+  lightboxImage.removeAttribute('src');
+  document.body.classList.remove('lightbox-open');
+  lastFocusedImage?.focus();
+}
+
+// Ativa o zoom por clique e também pelo teclado
+document.querySelectorAll('.result-photo img').forEach((image) => {
+  image.tabIndex = 0;
+  image.setAttribute('role', 'button');
+  image.setAttribute('aria-label', `Ampliar imagem: ${image.alt}`);
+
+  image.addEventListener('click', () => openLightbox(image));
+  image.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openLightbox(image);
+    }
+  });
+});
+
+// Oferece três formas de fechar: botão, fundo escuro ou tecla Escape
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (event) => {
+  if (event.target === lightbox) closeLightbox();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !lightbox.hidden) closeLightbox();
+});
+
