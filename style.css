@@ -929,6 +929,15 @@ h2 {
   transition: transform 0.6s ease, filter 0.6s ease;
 }
 
+/* Exibe toda a captura panorâmica da mentoria sem cortar suas laterais */
+.result-photo-mentoria {
+  aspect-ratio: 20 / 9;
+}
+
+.result-photo-mentoria img {
+  object-fit: contain;
+}
+
 /* Espaço temporário para registros fotográficos que serão adicionados depois */
 .result-photo-placeholder {
   display: grid;
