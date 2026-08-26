@@ -28,7 +28,7 @@
   <meta name="twitter:image:alt" content="Logo do Clube Maker do projeto FECCI Fusion 360">
   <title>Projeto FECCI | Competências STEAM com Fusion 360</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="style.css?v=27">
+  <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
   <!-- Cabeçalho inicial e navegação principal -->
@@ -76,14 +76,17 @@
         <div
           class="model-viewer"
           data-model-viewer
-          tabindex="0"
           role="group"
           aria-label="Modelo 3D criado no Fusion 360"
           aria-describedby="model-instructions"
         >
           <canvas class="model-canvas" aria-hidden="true"></canvas>
-          <p class="model-loading" role="status">Carregando modelo 3D…</p>
-          <p class="model-hint" id="model-instructions"><span aria-hidden="true">↻</span> Arraste ou use as setas para girar</p>
+          <!-- Permanece disponível quando o módulo local não pode ser executado -->
+          <p class="model-fallback">O visualizador 3D requer JavaScript para funcionar.</p>
+          <p class="model-loading" role="status" hidden>Carregando modelo 3D…</p>
+          <p class="model-hint" id="model-instructions" hidden><span aria-hidden="true">↻</span> Arraste ou use as setas para girar</p>
+          <!-- Permite interromper a rotação automática sem bloquear o giro manual -->
+          <button class="model-motion-toggle" type="button" aria-pressed="false" hidden>Pausar rotação</button>
         </div>
         <span class="axis" aria-hidden="true">● &nbsp; X &nbsp; Y &nbsp; Z</span>
       </div>
@@ -498,8 +501,8 @@
     }
   </script>
   <!-- Controla o carregamento e a interação com o modelo STL -->
-  <script type="module" src="model-viewer.js?v=7"></script>
-  <!-- Controla o menu, as animações de entrada e o ano do rodapé -->
-  <script src="script.js?v=3"></script>
+  <script type="module" src="model-viewer.js?v=8"></script>
+  <!-- Controla menu, animações de entrada, ano do rodapé e lightbox -->
+  <script src="script.js?v=4"></script>
 </body>
 </html>
