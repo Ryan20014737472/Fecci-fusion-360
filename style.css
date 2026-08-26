@@ -312,7 +312,7 @@ h1 em {
 
 .model-viewer.is-loaded {
   cursor: grab;
-  touch-action: none;
+  touch-action: pan-y pinch-zoom;
 }
 
 .model-viewer.is-dragging {
@@ -325,6 +325,47 @@ h1 em {
   border-radius: 24px;
 }
 
+/* Controle persistente para pausar ou retomar a rotação automática */
+.model-motion-toggle {
+  position: absolute;
+  z-index: 3;
+  top: 18px;
+  right: 18px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 106, 33, 0.48);
+  border-radius: 999px;
+  background: rgba(16, 18, 20, 0.88);
+  color: #e5e5e2;
+  font: 700 11px monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.model-motion-toggle[hidden] {
+  display: none;
+}
+
+.model-motion-toggle:hover:not(:disabled) {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.model-motion-toggle:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.model-motion-toggle:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.88;
+}
+
 .model-canvas {
   width: 100%;
   height: 100%;
@@ -332,7 +373,8 @@ h1 em {
   filter: drop-shadow(22px 32px 24px rgba(0, 0, 0, 0.38));
 }
 
-.model-loading {
+.model-loading,
+.model-fallback {
   position: absolute;
   inset: 0;
   display: grid;
@@ -345,7 +387,9 @@ h1 em {
   pointer-events: none;
 }
 
-.model-loading[hidden] {
+.model-loading[hidden],
+.model-fallback[hidden],
+.model-hint[hidden] {
   display: none;
 }
 
@@ -1467,14 +1511,19 @@ footer p {
   color: var(--muted);
 }
 
-/* Estado inicial e final das animações de entrada */
+/* Conteúdo visível por padrão; o JavaScript ativa a animação com segurança */
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-enhanced .reveal {
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
-.reveal.visible {
+.reveal-enhanced .reveal.visible {
   opacity: 1;
   transform: none;
 }
@@ -1591,8 +1640,18 @@ footer p {
   }
 
   .header {
-    height: 78px;
+    height: auto;
+    min-height: 78px;
+    padding-block: 6px;
     padding-inline: 18px;
+    flex-wrap: wrap;
+  }
+
+  .header.menu-enhanced {
+    height: 78px;
+    min-height: 0;
+    padding-block: 0;
+    flex-wrap: nowrap;
   }
 
   .brand-group {
@@ -1613,31 +1672,57 @@ footer p {
   }
 
   .menu-button {
-    display: block;
+    display: none;
     position: relative;
     z-index: 2;
   }
 
+  /* Sem JavaScript, os links permanecem visíveis e podem quebrar em linhas */
   .nav {
+    position: static;
+    width: 100%;
+    padding: 12px 0 18px;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 4px 16px;
+    background: transparent;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav a {
+    width: auto;
+    min-height: 44px;
+  }
+
+  /* Depois da inicialização, o menu volta ao comportamento expansível */
+  .header.menu-enhanced .menu-button {
+    display: block;
+  }
+
+  .header.menu-enhanced .nav {
     position: absolute;
     top: 78px;
     left: 0;
     right: 0;
+    width: auto;
     padding: 25px;
     display: none;
-    flex-direction: column;
+    flex-flow: column nowrap;
     gap: 4px;
     background: #101214;
     border-bottom: 1px solid var(--line);
   }
 
-  .nav a {
+  .header.menu-enhanced .nav a {
     width: 100%;
-    min-height: 44px;
   }
 
-  .nav.open {
+  .header.menu-enhanced .nav.open {
     display: flex;
+  }
+
+  .header:not(.menu-enhanced) ~ main .hero {
+    padding-top: 280px;
   }
 
   .hero {
@@ -1687,6 +1772,13 @@ footer p {
   .model-hint {
     bottom: 14px;
     font-size: 11px;
+  }
+
+  .model-motion-toggle {
+    top: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+    font-size: 10px;
   }
 
   .orbit-one {
@@ -2039,6 +2131,15 @@ body.lightbox-open {
   }
 }
 
+/* Garante que a impressão não dependa do ponto já percorrido na página */
+@media print {
+  .reveal-enhanced .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Respeita a preferência por movimentos reduzidos do usuário */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -2052,6 +2153,7 @@ body.lightbox-open {
   }
 
   .model-hint,
+  .model-motion-toggle,
   .brand-club-logo,
   .fusion-logo,
   .button,
