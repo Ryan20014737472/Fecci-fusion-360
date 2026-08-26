@@ -59,7 +59,18 @@ a {
   text-decoration: none;
 }
 
-/* Cabeçalho fixo, marca do projeto e menu de navegação */
+/* Mantém o foco do teclado visível e coerente nos principais controles */
+.brand:focus-visible,
+.nav a:focus-visible,
+.menu-button:focus-visible,
+.button:focus-visible,
+.fusion-logo:focus-visible,
+.fecci-download:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+}
+
+/* Cabeçalho inicial, marca do projeto e menu de navegação */
 .header {
   height: 82px;
   padding: 0 clamp(24px, 5vw, 76px);
@@ -599,8 +610,7 @@ h2 {
 .article-card > span,
 .material-panel > span,
 .result-card > span,
-.result-note > span,
-.team-pending > span {
+.result-note > span {
   color: var(--orange);
   font: 700 10px monospace;
   letter-spacing: 0.16em;
@@ -621,23 +631,6 @@ h2 {
 .article-card .article-meta {
   color: #d4d5d5;
   font-size: 12px;
-}
-
-.content-pending {
-  display: inline-flex;
-  align-items: center;
-  min-height: 25px;
-  padding: 0 9px;
-  border: 1px solid rgba(255, 106, 33, 0.4);
-  color: var(--orange);
-  font: 700 9px monospace;
-  letter-spacing: 0.12em;
-}
-
-.article-card .content-pending {
-  position: absolute;
-  left: 30px;
-  bottom: 30px;
 }
 
 .article-link {
@@ -957,22 +950,6 @@ h2 {
   object-fit: contain;
 }
 
-/* Espaço temporário para registros fotográficos que serão adicionados depois */
-.result-photo-placeholder {
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 106, 33, 0.28), transparent 38%),
-    #202326;
-}
-
-.result-photo-placeholder > span {
-  color: rgba(255, 255, 255, 0.82);
-  font: 800 11px monospace;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .result-card-featured:hover .result-photo img {
   transform: scale(1.018);
   filter: contrast(1.03) saturate(1.03);
@@ -1007,10 +984,6 @@ h2 {
 .result-featured-copy p {
   font-size: 15px;
   line-height: 1.85;
-}
-
-.result-card-secondary h3 {
-  margin-top: 38px;
 }
 
 .result-note {
@@ -1401,22 +1374,6 @@ h2 {
   filter: saturate(1) contrast(1.03);
 }
 
-/* Marcador temporário exibido enquanto a foto do participante não foi enviada */
-.participant-photo-placeholder {
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(circle at 35% 30%, rgba(238, 101, 46, 0.3), transparent 38%),
-    #17191b;
-}
-
-.participant-photo-placeholder span {
-  color: rgba(255, 255, 255, 0.88);
-  font-size: clamp(54px, 7vw, 90px);
-  font-weight: 900;
-  letter-spacing: -0.06em;
-}
-
 .participant-info {
   position: relative;
   display: flex;
@@ -1451,6 +1408,12 @@ h2 {
   letter-spacing: -0.045em;
 }
 
+/* Ajusta nomes longos à largura dos cartões compactos da equipe */
+.participant-list .participant-info h3 {
+  font-size: clamp(28px, 3vw, 42px);
+  overflow-wrap: break-word;
+}
+
 .participant-description {
   min-height: 86px;
   margin: 28px 0 0;
@@ -1458,12 +1421,6 @@ h2 {
   border-top: 1px solid rgba(17, 17, 17, 0.18);
   color: #555;
   line-height: 1.65;
-}
-
-/* Indica de forma discreta onde a descrição do participante será inserida */
-.participant-description-empty {
-  color: #8a8882;
-  font-style: italic;
 }
 
 /* Rodapé e identificação final do site */
@@ -1829,7 +1786,7 @@ footer p {
     aspect-ratio: 4 / 3;
   }
 
-  .participant-info {
+  .participant-list .participant-info {
     min-height: 300px;
   }
 
@@ -1936,7 +1893,15 @@ body.lightbox-open {
     transition: none;
   }
 
-  .model-hint {
+  .model-hint,
+  .brand-club-logo,
+  .fusion-logo,
+  .button,
+  .article-link,
+  .material-link,
+  .journal-link,
+  .result-photo img,
+  .participant-photo img {
     transition: none;
   }
 }
