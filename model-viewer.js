@@ -75,8 +75,8 @@ if (viewer) {
           renderer.toneMapping = THREE.ACESFilmicToneMapping;
           renderer.toneMappingExposure = 1.15;
           renderer.shadowMap.enabled = true;
-          renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-          renderer.shadowMap.autoUpdate = false;
+          renderer.shadowMap.type = THREE.PCFShadowMap;
+          renderer.shadowMap.autoUpdate = true;
 
           // Permite girar o modelo livremente com mouse ou toque
           const controls = new OrbitControls(camera, canvas);
