@@ -5,7 +5,10 @@
   // Seleciona os elementos utilizados pelo menu responsivo
   const menuButton = document.querySelector('.menu-button');
   const nav = document.querySelector('.nav');
+  const header = document.querySelector('.header');
   const menuContainer = menuButton?.closest('.header');
+  const navMore = nav?.querySelector('.nav-more');
+  const navMoreButton = navMore?.querySelector('.nav-more-button');
 
   // Configura o menu apenas quando seus dois elementos estiverem disponíveis
   if (menuButton && nav) {
@@ -32,6 +35,8 @@
     // Fecha o menu quando um link é escolhido e evita manter foco em conteúdo oculto
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => {
+        navMore?.classList.remove('open');
+        navMoreButton?.setAttribute('aria-expanded', 'false');
         closeMenu(mobileMenuQuery.matches);
       });
     });
@@ -74,6 +79,99 @@
 
     // O CSS só esconde a navegação depois que todos os controles estão prontos
     menuContainer?.classList.add('menu-enhanced');
+  }
+
+  // Abre o grupo "Mais" no desktop e mantém o controle sincronizado com ARIA
+  if (navMore && navMoreButton) {
+    const closeMoreMenu = (returnFocus = false) => {
+      navMore.classList.remove('open');
+      navMoreButton.setAttribute('aria-expanded', 'false');
+
+      if (returnFocus) {
+        navMoreButton.focus({ preventScroll: true });
+      }
+    };
+
+    navMoreButton.addEventListener('click', () => {
+      const isOpen = navMore.classList.toggle('open');
+      navMoreButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (target instanceof Node && !navMore.contains(target)) {
+        closeMoreMenu();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMore.classList.contains('open')) {
+        event.preventDefault();
+        closeMoreMenu(true);
+      }
+    });
+  }
+
+  // Mantém o cabeçalho legível e destaca a seção atual durante a rolagem
+  const navigationLinks = Array.from(
+    document.querySelectorAll('[data-nav-link][href^="#"]')
+  );
+  const navigationTargets = navigationLinks
+    .map((link) => {
+      const targetId = link.getAttribute('href')?.slice(1);
+      const section = targetId ? document.getElementById(targetId) : null;
+      return section ? { link, section } : null;
+    })
+    .filter(Boolean)
+    .sort((first, second) => first.section.offsetTop - second.section.offsetTop);
+
+  if (header || navigationTargets.length > 0) {
+    let navigationFrame = 0;
+
+    const updateNavigationState = () => {
+      navigationFrame = 0;
+      header?.classList.toggle('is-scrolled', window.scrollY > 18);
+
+      if (navigationTargets.length === 0) return;
+
+      const headerHeight = header?.offsetHeight || 0;
+      const readingLine = window.scrollY + headerHeight + window.innerHeight * 0.26;
+      let activeTarget = null;
+
+      navigationTargets.forEach((target) => {
+        if (target.section.offsetTop <= readingLine) {
+          activeTarget = target;
+        }
+      });
+
+      if (window.scrollY < navigationTargets[0].section.offsetTop - headerHeight) {
+        activeTarget = null;
+      }
+
+      navigationLinks.forEach((link) => {
+        if (link === activeTarget?.link) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+
+      navMoreButton?.classList.toggle(
+        'is-active',
+        Boolean(activeTarget?.link.closest('.nav-more-menu'))
+      );
+    };
+
+    const requestNavigationUpdate = () => {
+      if (navigationFrame) return;
+      navigationFrame = window.requestAnimationFrame(updateNavigationState);
+    };
+
+    updateNavigationState();
+    window.addEventListener('scroll', requestNavigationUpdate, { passive: true });
+    window.addEventListener('resize', requestNavigationUpdate, { passive: true });
+    window.addEventListener('hashchange', requestNavigationUpdate);
   }
 
   // Revela os elementos quando eles entram na área visível da página
@@ -132,12 +230,12 @@
     const lightboxImage = lightbox.querySelector('img');
     const lightboxCaption = lightbox.querySelector('.image-lightbox-caption');
     const lightboxClose = lightbox.querySelector('.image-lightbox-close');
-    const resultImages = document.querySelectorAll('.result-photo img');
+    const resultImageTriggers = document.querySelectorAll('[data-lightbox-trigger]');
     const backgroundElements = document.querySelectorAll(
       'body > header, body > main, body > footer'
     );
     const backgroundStates = new Map();
-    let lastFocusedImage = null;
+    let lastFocusedTrigger = null;
 
     // Continua apenas quando a estrutura interna do lightbox estiver completa
     if (lightboxImage && lightboxCaption && lightboxClose) {
@@ -196,13 +294,17 @@
       };
 
       // Abre a imagem original e mantém sua descrição acessível
-      const openLightbox = (image) => {
+      const openLightbox = (trigger) => {
         if (!lightbox.hidden) return;
+
+        const image = trigger.querySelector('img');
+
+        if (!image) return;
 
         const caption = getImageCaption(image);
 
-        lastFocusedImage = image;
-        image.setAttribute('aria-expanded', 'true');
+        lastFocusedTrigger = trigger;
+        trigger.setAttribute('aria-expanded', 'true');
         lightboxImage.src = image.currentSrc || image.src;
         lightboxImage.alt = image.alt;
         lightboxCaption.textContent = caption;
@@ -223,36 +325,27 @@
         lightboxImage.alt = '';
         lightboxCaption.textContent = '';
 
-        if (lastFocusedImage) {
-          lastFocusedImage.setAttribute('aria-expanded', 'false');
+        if (lastFocusedTrigger) {
+          lastFocusedTrigger.setAttribute('aria-expanded', 'false');
 
-          if (lastFocusedImage.isConnected) {
-            lastFocusedImage.focus({ preventScroll: true });
+          if (lastFocusedTrigger.isConnected) {
+            lastFocusedTrigger.focus({ preventScroll: true });
           }
         }
 
-        lastFocusedImage = null;
+        lastFocusedTrigger = null;
       };
 
-      // Ativa o zoom por clique e também pelo teclado
-      resultImages.forEach((image) => {
-        image.tabIndex = 0;
-        image.setAttribute('role', 'button');
-        image.setAttribute('aria-haspopup', 'dialog');
-        image.setAttribute('aria-controls', lightbox.id);
-        image.setAttribute('aria-expanded', 'false');
-        image.setAttribute(
-          'aria-label',
-          'Ampliar imagem: ' + getImageCaption(image)
-        );
+      // Botões nativos oferecem clique, Enter e Espaço sem simular semântica na imagem
+      resultImageTriggers.forEach((trigger) => {
+        const image = trigger.querySelector('img');
 
-        image.addEventListener('click', () => openLightbox(image));
-        image.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            openLightbox(image);
-          }
-        });
+        if (!image) return;
+
+        trigger.setAttribute('aria-haspopup', 'dialog');
+        trigger.setAttribute('aria-controls', lightbox.id);
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.addEventListener('click', () => openLightbox(trigger));
       });
 
       // Fecha pelo botão ou por um clique no fundo escuro

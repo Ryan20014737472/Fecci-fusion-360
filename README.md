@@ -25,7 +25,7 @@ O projeto é um site estático. Isso significa que não utiliza banco de dados n
 
 - **HTML5:** estrutura e conteúdo em `index.html`.
 - **CSS3:** aparência e responsividade em `style.css`.
-- **JavaScript:** menu, animações e ampliação de imagens em `script.js`.
+- **JavaScript:** menus, seção ativa, animações e ampliação de imagens em `script.js`.
 - **Three.js:** renderização do modelo 3D em `model-viewer.js`.
 - **GitHub Pages:** publicação do site.
 
@@ -46,6 +46,7 @@ Fecci-fusion-360/
     ├── maker logo.png         # Logo do Clube Maker
     ├── mentoriamaker.png      # Registro da mentoria
     ├── orientação.jpeg        # Registro da orientação
+    ├── previews/              # Miniaturas otimizadas dos documentos
     ├── artigos/               # Artigos e PDFs do projeto
     └── participantes/         # Fotografias da equipe
 ```
@@ -133,11 +134,15 @@ O menu fica dentro de:
 <nav class="nav" aria-label="Navegação principal">
 ```
 
-Para adicionar um link, insira:
+Os seis destinos principais ficam diretamente dentro de `.nav`. Artigo FECCI, Material de apoio e Referências ficam agrupados em `.nav-more`, usado pelo botão **Mais** no desktop. No celular, esses três links aparecem junto aos demais.
+
+Para adicionar um destino principal, insira:
 
 ```html
-<a href="#novo-id">Nova seção</a>
+<a href="#novo-id" data-nav-link>Nova seção</a>
 ```
+
+Para adicionar um destino complementar, coloque o mesmo link dentro de `.nav-more-menu`.
 
 A seção de destino precisa possuir o mesmo ID:
 
@@ -151,6 +156,7 @@ Regras importantes:
 - o valor de `id` não começa com `#`;
 - os dois textos precisam ser iguais;
 - cada ID deve existir apenas uma vez na página;
+- `data-nav-link` permite que o JavaScript destaque a seção visível;
 - menus muito grandes podem ficar apertados em telas intermediárias, então teste também no celular.
 
 ## 7. Como criar uma nova seção
@@ -217,12 +223,14 @@ Isso evita caminhos como `%20`, que representa um espaço em uma URL.
 
 ```html
 <figure class="result-photo">
-  <img src="assets/nova-foto.jpg" alt="Descrição do que acontece na foto" loading="lazy">
+  <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar a foto">
+    <img src="assets/nova-foto.jpg" alt="Descrição do que acontece na foto" width="1600" height="900" loading="lazy" decoding="async">
+  </button>
   <figcaption>Legenda curta da foto.</figcaption>
 </figure>
 ```
 
-As imagens com a classe `.result-photo` ganham ampliação por clique através de `script.js`.
+O botão com `data-lightbox-trigger` ganha ampliação por clique e teclado através de `script.js`. Troque `width` e `height` pelas dimensões reais da imagem para evitar mudanças de layout durante o carregamento.
 
 ### Se uma imagem estiver cortada
 
@@ -259,12 +267,13 @@ Modelo:
 <!-- Participante do projeto -->
 <article class="participant-card participant-card-left" data-participant-number="04">
   <figure class="participant-photo">
-    <img src="assets/participantes/nome.jpg" alt="Foto do participante Nome Completo" loading="lazy">
+    <img src="assets/participantes/nome.jpg" alt="Foto do participante Nome Completo" width="1200" height="1400" loading="lazy" decoding="async">
   </figure>
   <div class="participant-info">
     <span>PARTICIPANTE 04</span>
     <h3>Nome Completo</h3>
     <p class="participant-description">Descrição da função no projeto.</p>
+    <ul class="participant-tags"><li>Responsabilidade real</li></ul>
   </div>
 </article>
 ```
@@ -296,7 +305,9 @@ Dentro de `.result-grid`, copie um dos cartões horizontais:
 <!-- Novo momento registrado no projeto -->
 <article class="result-card result-card-featured result-card-light reveal">
   <figure class="result-photo">
-    <img src="assets/registro.jpg" alt="Descrição acessível do registro" loading="lazy">
+    <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar o registro">
+      <img src="assets/registro.jpg" alt="Descrição acessível do registro" width="1600" height="900" loading="lazy" decoding="async">
+    </button>
     <figcaption>Legenda visível na imagem.</figcaption>
   </figure>
   <div class="result-featured-copy">
@@ -375,6 +386,8 @@ O botão atual abre uma versão externa do Borke no Canva. Para alterar o endere
 
 e substitua apenas o valor de `href`.
 
+A linha do tempo resumida fica em `.journal-timeline`. Como o diário ainda não possui datas editoriais confirmadas, os itens usam `ETAPA 01`, `ETAPA 02` e assim por diante. Acrescente uma data somente quando ela estiver registrada no Borke; não deduza datas a partir do nome das fotos.
+
 Quando o diário estiver finalizado como PDF:
 
 1. envie o arquivo para `assets/` ou `assets/artigos/`;
@@ -441,8 +454,12 @@ Não altere `position`, `grid-template-columns` ou `overflow` sem testar tamanho
 | `.model-viewer` | tamanho do visualizador 3D |
 | `.light-section` | fundo claro compartilhado |
 | `.section-heading` | número, categoria e título das seções |
+| `.project-journey` | visão geral do processo do projeto |
 | `.article-card` | cartões dos artigos |
+| `.course-track` e `.course-module` | trilha visual do minicurso |
+| `.document-meta` | etiquetas de tipo, ano e páginas dos documentos |
 | `.result-card` | cartões dos registros |
+| `.journal-timeline` | resumo interno do diário Borke |
 | `.participant-card` | cartões da equipe |
 | `.reveal` | estado inicial da animação de entrada |
 | `.visible` | estado exibido após a animação |
@@ -465,7 +482,7 @@ As regras que começam com `@media` são aplicadas apenas em determinadas largur
 Exemplo:
 
 ```css
-@media (max-width: 760px) {
+@media (max-width: 800px) {
   /* Regras para telas pequenas */
 }
 ```
@@ -476,18 +493,24 @@ Ao editar a responsividade:
 2. reduza grades para uma coluna quando não houver espaço;
 3. evite larguras fixas maiores que a tela;
 4. não use margens negativas grandes;
-5. teste pelo menos em aproximadamente 360 px, 768 px e em uma tela de computador;
+5. teste pelo menos em 320 px, 360 px, 768 px, 1366 × 768 e Full HD;
 6. verifique se nenhum conteúdo exige rolagem para o lado.
 
-O menu móvel depende das classes `.menu-button`, `.nav` e `.nav.open`. O JavaScript adiciona e remove `open`; portanto, não renomeie essas classes isoladamente.
+O menu móvel depende das classes `.menu-button`, `.nav` e `.nav.open`. O submenu desktop depende de `.nav-more`, `.nav-more-button` e `.nav-more-menu`. O JavaScript adiciona e remove `open`; portanto, não renomeie essas classes isoladamente.
 
 ## 16. Como funciona o `script.js`
 
-O arquivo possui quatro responsabilidades.
+O arquivo possui cinco responsabilidades principais.
 
 ### Menu móvel
 
 Ao clicar em `.menu-button`, o JavaScript alterna a classe `.open` no menu e atualiza `aria-expanded` e `aria-label` para acessibilidade.
+
+O botão `.nav-more-button` controla o submenu **Mais** no desktop. Ele fecha ao escolher um link, clicar fora ou pressionar `Escape`.
+
+### Cabeçalho e seção atual
+
+Durante a rolagem, o script adiciona `.is-scrolled` ao cabeçalho e usa os links com `data-nav-link` para marcar o destino visível com `aria-current="location"`. Os links complementares também ativam discretamente o botão **Mais**.
 
 ### Animação de entrada
 
@@ -505,7 +528,7 @@ O rodapé precisa continuar contendo `<span id="year">`.
 
 ### Ampliação das imagens
 
-O script encontra todas as imagens dentro de `.result-photo`, transforma-as em controles acessíveis e abre o `.image-lightbox`.
+O script encontra os botões nativos com `data-lightbox-trigger`, lê a imagem interna e abre o `.image-lightbox`.
 
 O visitante pode fechar a imagem:
 
@@ -513,7 +536,7 @@ O visitante pode fechar a imagem:
 - clicando no fundo escuro;
 - pressionando `Escape`.
 
-Para que uma nova imagem de resultado receba essa função automaticamente, coloque-a dentro de um elemento com a classe `result-photo`.
+Para que uma nova imagem de resultado receba essa função automaticamente, use o botão `.result-photo-trigger` com o atributo `data-lightbox-trigger` dentro de `.result-photo`.
 
 ## 17. Como funciona o modelo 3D
 
@@ -611,7 +634,7 @@ Antes de substituir o STL, exporte as letras e o corpo como sólidos separados o
 - `fillLight` suaviza áreas escuras;
 - `renderer.setPixelRatio(...)` controla nitidez e custo de renderização;
 - `antialias: true` suaviza bordas;
-- sombras usam `PCFSoftShadowMap`.
+- sombras usam `PCFShadowMap`, com atualização automática preservada para manter o modelo visível.
 
 Não use um `pixelRatio` muito alto, pois pode deixar o site lento em celulares.
 
@@ -620,18 +643,18 @@ Não use um `pixelRatio` muito alto, pois pode deixar o site lento em celulares.
 O HTML carrega os arquivos com sufixos como:
 
 ```html
-<link rel="stylesheet" href="style.css?v=25">
-<script type="module" src="model-viewer.js?v=7"></script>
-<script src="script.js?v=2"></script>
+<link rel="stylesheet" href="style.css?v=29">
+<script type="module" src="model-viewer.js?v=9"></script>
+<script src="script.js?v=5"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
 
 Após mudar um desses arquivos, aumente seu número:
 
-- `style.css?v=25` → `style.css?v=26`;
-- `model-viewer.js?v=7` → `model-viewer.js?v=8`;
-- `script.js?v=2` → `script.js?v=3`.
+- `style.css?v=29` → `style.css?v=30`;
+- `model-viewer.js?v=9` → `model-viewer.js?v=10`;
+- `script.js?v=5` → `script.js?v=6`.
 
 O número não altera o nome real do arquivo.
 
@@ -827,4 +850,3 @@ Antes de mudar qualquer trecho, descubra a relação entre os arquivos:
 - se substituir o STL, confirme escala, orientação, componentes e materiais.
 
 Seguindo essas relações, o site pode evoluir sem perder o estilo, a responsividade ou as funções que já estão prontas.
-

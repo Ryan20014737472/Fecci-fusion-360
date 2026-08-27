@@ -28,9 +28,12 @@
   <meta name="twitter:image:alt" content="Logo do Clube Maker do projeto FECCI Fusion 360">
   <title>Projeto FECCI | Competências STEAM com Fusion 360</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="style.css?v=28">
+  <link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
+  <!-- Atalho de teclado para alcançar diretamente o conteúdo principal -->
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
+
   <!-- Cabeçalho inicial e navegação principal -->
   <header class="header">
     <div class="brand-group">
@@ -47,18 +50,29 @@
       <span aria-hidden="true"></span><span aria-hidden="true"></span>
     </button>
     <nav class="nav" id="navegacao-principal" aria-label="Navegação principal">
-      <a href="#projeto">Projeto</a>
-      <a href="#fundamentacao">Pesquisa</a>
-      <a href="#artigo-fecci">Artigo FECCI</a>
-      <a href="#minicurso">Minicurso</a>
-      <a href="#resultados">Resultados</a>
-      <a href="#diario">Diário</a>
-      <a href="#equipe">Equipe</a>
+      <a href="#projeto" data-nav-link>Projeto</a>
+      <a href="#fundamentacao" data-nav-link>Pesquisa</a>
+      <a href="#minicurso" data-nav-link>Minicurso</a>
+      <a href="#resultados" data-nav-link>Resultados</a>
+      <a href="#diario" data-nav-link>Diário</a>
+      <a href="#equipe" data-nav-link>Equipe</a>
+
+      <!-- Agrupa destinos complementares sem sobrecarregar o menu no desktop -->
+      <div class="nav-more">
+        <button class="nav-more-button" type="button" aria-expanded="false" aria-controls="nav-more-menu">
+          Mais <span aria-hidden="true">⌄</span>
+        </button>
+        <div class="nav-more-menu" id="nav-more-menu">
+          <a href="#artigo-fecci" data-nav-link>Artigo FECCI</a>
+          <a href="#material" data-nav-link>Material de apoio</a>
+          <a href="#referencias" data-nav-link>Referências</a>
+        </div>
+      </div>
     </nav>
   </header>
 
   <!-- Conteúdo principal do site -->
-  <main id="conteudo-principal">
+  <main id="conteudo-principal" tabindex="-1">
     <!-- Apresentação inicial do projeto e visualizador do modelo 3D -->
     <section class="hero" id="inicio">
       <div class="hero-copy reveal">
@@ -140,6 +154,25 @@
           </aside>
         </div>
       </div>
+
+      <!-- Visão geral do processo, conectando a questão inicial às evidências -->
+      <div class="project-journey reveal" aria-labelledby="project-journey-title">
+        <div class="project-journey-intro">
+          <p class="project-label">VISÃO GERAL DO PROCESSO</p>
+          <h3 id="project-journey-title">Da pergunta inicial aos resultados.</h3>
+          <p>A jornada organiza as etapas que orientam o desenvolvimento do projeto e mostra como pesquisa, prática e avaliação se conectam.</p>
+        </div>
+        <ol class="project-journey-list">
+          <li><a href="#projeto"><span>01</span><strong>Problema</strong></a></li>
+          <li><a href="#fundamentacao"><span>02</span><strong>Pesquisa</strong></a></li>
+          <li><a href="#minicurso"><span>03</span><strong>Planejamento</strong></a></li>
+          <li><a href="#minicurso"><span>04</span><strong>Minicurso</strong></a></li>
+          <li><a href="#resultados"><span>05</span><strong>Aplicação</strong></a></li>
+          <li><a href="#resultados"><span>06</span><strong>Avaliação</strong></a></li>
+          <li><a href="#resultados"><span>07</span><strong>Resultados</strong></a></li>
+        </ol>
+        <p class="project-journey-note"><span aria-hidden="true">↺</span> Um processo iterativo: as evidências orientam os próximos ajustes.</p>
+      </div>
     </section>
 
     <!-- Fundamentação teórica baseada nos três artigos estudados -->
@@ -159,31 +192,46 @@
 
       <div class="article-grid" role="list" aria-label="Artigos da fundamentação teórica">
         <article class="article-card reveal" role="listitem">
-          <span>ARTIGO 01</span>
-          <h3>Estudo das consequências da aplicação de impressoras 3D no ambiente escolar</h3>
+          <div class="article-card-topline"><span>ARTIGO 01</span><span>2021</span></div>
+          <h3><a href="assets/artigos/evangelista-oliveira-2021.pdf" target="_blank" rel="noopener noreferrer">Estudo das consequências da aplicação de impressoras 3D no ambiente escolar</a></h3>
           <p class="article-meta">Fábio Lombardo Evangelista e Lincoln Moura de Oliveira • 2021</p>
           <p>Por meio de uma pesquisa bibliográfica, o artigo apresenta diferentes aplicações da impressão 3D na educação e mostra como essa tecnologia pode aproximar teoria e prática, facilitar a compreensão de conceitos abstratos e estimular a criatividade, a curiosidade e a capacidade de resolver problemas.</p>
-          <a class="article-link" href="assets/artigos/evangelista-oliveira-2021.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do primeiro artigo">
-            Acessar PDF <span aria-hidden="true">↗</span>
-          </a>
+          <div class="article-contribution">
+            <span>COMO CONTRIBUIU PARA O PROJETO</span>
+            <p>Fundamentou a aproximação entre teoria e prática e o uso da prototipagem para estimular criatividade e resolução de problemas.</p>
+          </div>
+          <div class="article-actions">
+            <a class="article-link" href="assets/artigos/evangelista-oliveira-2021.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do primeiro artigo">PDF <span aria-hidden="true">↗</span></a>
+            <a class="article-secondary-link" href="https://doi.org/10.26512/2446-564X2021e35946" target="_blank" rel="noopener noreferrer">DOI <span aria-hidden="true">↗</span></a>
+          </div>
         </article>
         <article class="article-card reveal" role="listitem">
-          <span>ARTIGO 02</span>
-          <h3>Manufatura aditiva e o ambiente maker: sinergia para transformar o ensino de desenho técnico e modelagem 3D</h3>
+          <div class="article-card-topline"><span>ARTIGO 02</span><span>2025</span></div>
+          <h3><a href="assets/artigos/chang,melo,silva_compressed.pdf" target="_blank" rel="noopener noreferrer">Manufatura aditiva e o ambiente maker: sinergia para transformar o ensino de desenho técnico e modelagem 3D</a></h3>
           <p class="article-meta">Victor Rasquinho Ho Te Chang, Dominycke Guasti de Melo e Sinval Pedroso da Silva • 2025</p>
           <p>Com oito estudantes de Modelagem Mecânica 3D, o estudo integrou software CAD, impressão 3D e prototipagem rápida de peças e conjuntos mecânicos. A comparação entre o pré-teste e o pós-teste mostrou melhora média de 46,4%, especialmente nas questões de dificuldade média e alta, reforçando o potencial da manufatura aditiva para a visualização espacial e a aprendizagem prática.</p>
-          <a class="article-link" href="assets/artigos/chang,melo,silva_compressed.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do segundo artigo">
-            Acessar PDF <span aria-hidden="true">↗</span>
-          </a>
+          <div class="article-contribution">
+            <span>COMO CONTRIBUIU PARA O PROJETO</span>
+            <p>Apoiou a integração entre CAD e aprendizagem prática e serviu de referência para a comparação entre questionários antes e depois da atividade.</p>
+          </div>
+          <div class="article-actions">
+            <a class="article-link" href="assets/artigos/chang,melo,silva_compressed.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do segundo artigo">PDF <span aria-hidden="true">↗</span></a>
+            <a class="article-secondary-link" href="https://doi.org/10.47456/bjpe.v11i3.48046" target="_blank" rel="noopener noreferrer">DOI <span aria-hidden="true">↗</span></a>
+          </div>
         </article>
         <article class="article-card reveal" role="listitem">
-          <span>ARTIGO 03</span>
-          <h3>O pensamento geométrico espacial e sua articulação com a visualização e a manipulação de objetos em 3D</h3>
+          <div class="article-card-topline"><span>ARTIGO 03</span><span>2023</span></div>
+          <h3><a href="assets/artigos/Lavicza,Abar,Tejera.pdf" target="_blank" rel="noopener noreferrer">O pensamento geométrico espacial e sua articulação com a visualização e a manipulação de objetos em 3D</a></h3>
           <p class="article-meta">Zsolt Lavicza, Celina Aparecida Almeida Pereira Abar e Mathias Tejera • 2023</p>
           <p>Em um estudo de caso com sete professores de Matemática matriculados em um curso de mestrado, os autores articularam superfícies quádricas impressas em 3D, desenhos, equações e representações dinâmicas no GeoGebra. A atividade evidenciou tanto o potencial da manipulação física e digital para desenvolver visualização espacial, compreensão geométrica e resolução de problemas quanto a necessidade de orientação para converter corretamente entre os registros gráfico, algébrico e digital.</p>
-          <a class="article-link" href="assets/artigos/Lavicza,Abar,Tejera.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do terceiro artigo">
-            Acessar PDF <span aria-hidden="true">↗</span>
-          </a>
+          <div class="article-contribution">
+            <span>COMO CONTRIBUIU PARA O PROJETO</span>
+            <p>Reforçou a importância da visualização espacial, da manipulação de objetos em 3D e de uma orientação guiada durante a aprendizagem.</p>
+          </div>
+          <div class="article-actions">
+            <a class="article-link" href="assets/artigos/Lavicza,Abar,Tejera.pdf" target="_blank" rel="noopener noreferrer" aria-label="Acessar PDF do terceiro artigo">PDF <span aria-hidden="true">↗</span></a>
+            <a class="article-secondary-link" href="https://doi.org/10.23925/1983-3156.2023v25i2p258-277" target="_blank" rel="noopener noreferrer">DOI <span aria-hidden="true">↗</span></a>
+          </div>
         </article>
       </div>
     </section>
@@ -199,8 +247,18 @@
       </div>
 
       <article class="fecci-article-card reveal">
+        <!-- Prévia otimizada da primeira página; o PDF completo só abre por solicitação -->
+        <a class="fecci-document-preview" href="assets/artigos/DESENVOLVIMENTO%20DE%20COMPET%C3%8ANCIAS%20STEAM%20POR%20MEIO%20DE%20UM%20MINICURSO%20DE%20PROTOTIPAGEM%203D%20UTILIZANDO%20O%20AUTODESK%20FUSION%20360.pdf" target="_blank" rel="noopener noreferrer" aria-label="Abrir a primeira página e o artigo FECCI completo em PDF">
+          <img src="assets/previews/artigo-fecci-capa.jpg" alt="Primeira página do artigo científico apresentado à FECCI 2026" width="1012" height="1432" loading="lazy" decoding="async">
+          <span>Visualizar documento <span aria-hidden="true">↗</span></span>
+        </a>
+
         <div class="fecci-article-intro">
-          <span>FECCI 2026 • ARTIGO COMPLETO</span>
+          <div class="document-meta" aria-label="Informações do documento">
+            <span>ARTIGO CIENTÍFICO</span>
+            <span>2026</span>
+            <span>5 PÁGINAS</span>
+          </div>
           <h3>Desenvolvimento de competências STEAM por meio de um minicurso de prototipagem 3D utilizando o Autodesk Fusion 360</h3>
           <p class="fecci-article-authors">Ryan Victor do Amaral Batistel, Renan Kauê Decker Silva e Arthur Luz Dutra</p>
           <p class="fecci-article-guidance">Orientação: Helton Limberger Moura • Coorientação: Profa. Dra. Mia Liberata David</p>
@@ -208,7 +266,7 @@
 
         <div class="fecci-article-summary">
           <span>SOBRE A PRODUÇÃO</span>
-          <p>O artigo apresenta a proposta do minicurso desenvolvido no Clube Maker CEP para aproximar estudantes do primeiro ano do Ensino Médio da Cultura Maker e das áreas STEAM. O trabalho reúne a fundamentação teórica, o planejamento da oficina, a capacitação inicial da equipe, os materiais produzidos e os resultados esperados com o uso do Autodesk Fusion 360.</p>
+          <p>O artigo apresenta a proposta do minicurso desenvolvido no Clube Maker CEP para aproximar estudantes do primeiro ano do Ensino Médio da Cultura Maker e das áreas STEAM. O trabalho reúne a fundamentação teórica, o planejamento da oficina, a capacitação inicial da equipe, os materiais produzidos e diferencia os resultados parciais dos resultados esperados com o uso do Autodesk Fusion 360.</p>
           <div class="fecci-article-actions">
             <a class="button" href="assets/artigos/DESENVOLVIMENTO%20DE%20COMPET%C3%8ANCIAS%20STEAM%20POR%20MEIO%20DE%20UM%20MINICURSO%20DE%20PROTOTIPAGEM%203D%20UTILIZANDO%20O%20AUTODESK%20FUSION%20360.pdf" target="_blank" rel="noopener noreferrer">
               Ler artigo completo <span aria-hidden="true">↗</span>
@@ -231,29 +289,71 @@
         </div>
       </div>
 
-      <div class="steps" role="list" aria-label="Etapas do minicurso">
-        <article class="step reveal" role="listitem">
-          <span>01</span>
-          <h3>Preparar</h3>
-          <p>Elaborar o roteiro da aula, estudar os principais conceitos do Fusion 360 e produzir o material de apoio para auxiliar os participantes durante e após a oficina.</p>
-        </article>
-        <article class="step reveal" role="listitem">
-          <span>02</span>
-          <h3>Modelar</h3>
-          <p>Apresentar o Fusion 360 enquanto os participantes modelam um parafuso e uma porca, aprendendo os principais conceitos da modelagem 3D de forma prática e intuitiva.</p>
-        </article>
-        <article class="step reveal" role="listitem">
-          <span>03</span>
-          <h3>Capacitar</h3>
-          <p>Aplicar a oficina-piloto aos integrantes da equipe para que coloquem em prática os conhecimentos adquiridos. Disponibilizar materiais e recursos para que os participantes continuem praticando e aprofundando seus conhecimentos após a atividade.</p>
-        </article>
-      </div>
+      <!-- Trilha didática baseada no plano e nos materiais já produzidos -->
+      <ol class="course-track" aria-label="Trilha de aprendizagem do minicurso">
+        <li class="course-module reveal">
+          <span class="course-module-number">01</span>
+          <p class="course-module-label">CONTEXTO</p>
+          <h3>Cultura Maker e STEAM</h3>
+          <p>Apresentação do projeto, das áreas STEAM e de aplicações da modelagem 3D em tecnologia, engenharia, design e inovação.</p>
+          <dl>
+            <div><dt>Objetivo</dt><dd>Relacionar a atividade prática ao contexto científico e tecnológico.</dd></div>
+            <div><dt>Conteúdo</dt><dd>Cultura Maker, STEAM e possibilidades profissionais.</dd></div>
+          </dl>
+        </li>
+        <li class="course-module reveal">
+          <span class="course-module-number">02</span>
+          <p class="course-module-label">PREPARAÇÃO</p>
+          <h3>Acesso e configuração</h3>
+          <p>Orientações para criação da conta educacional e configuração inicial do Autodesk Fusion 360 antes da prática.</p>
+          <dl>
+            <div><dt>Objetivo</dt><dd>Entrar no ambiente de trabalho com os recursos necessários prontos.</dd></div>
+            <div><dt>Material</dt><dd>Guia de apoio produzido pela equipe.</dd></div>
+          </dl>
+        </li>
+        <li class="course-module reveal">
+          <span class="course-module-number">03</span>
+          <p class="course-module-label">FUNDAMENTOS</p>
+          <h3>Interface e navegação 3D</h3>
+          <p>Familiarização com a área de trabalho, os planos, as principais ferramentas e a navegação no espaço tridimensional.</p>
+          <dl>
+            <div><dt>Objetivo</dt><dd>Reconhecer a interface e navegar com segurança pelo modelo.</dd></div>
+            <div><dt>Conteúdo</dt><dd>Planos XY, XZ e YZ, Timeline e ferramentas da oficina.</dd></div>
+          </dl>
+        </li>
+        <li class="course-module reveal">
+          <span class="course-module-number">04</span>
+          <p class="course-module-label">PRÁTICA</p>
+          <h3>Modelagem paramétrica</h3>
+          <p>Construção guiada de modelos para aplicar esboços, cotas, extrusão de sólidos e organização de componentes.</p>
+          <dl>
+            <div><dt>Objetivo</dt><dd>Transformar instruções e medidas em um modelo tridimensional.</dd></div>
+            <div><dt>Atividade</dt><dd>Modelagem de um parafuso e de uma porca.</dd></div>
+          </dl>
+        </li>
+        <li class="course-module reveal">
+          <span class="course-module-number">05</span>
+          <p class="course-module-label">AVALIAÇÃO</p>
+          <h3>Registro e continuidade</h3>
+          <p>Questionários antes e depois da formação apoiarão a comparação do conhecimento e do interesse dos participantes.</p>
+          <dl>
+            <div><dt>Objetivo</dt><dd>Registrar a aprendizagem e orientar melhorias nas próximas aplicações.</dd></div>
+            <div><dt>Continuidade</dt><dd>Revisão pelo material complementar e novas práticas.</dd></div>
+          </dl>
+        </li>
+      </ol>
 
       <div class="course-summary reveal" role="list" aria-label="Resumo do minicurso">
         <div class="course-fact" role="listitem"><span>STATUS</span><strong>Capacitação-piloto concluída</strong></div>
+        <div class="course-fact" role="listitem"><span>DURAÇÃO TOTAL</span><strong>90 minutos</strong></div>
         <div class="course-fact" role="listitem"><span>PÚBLICO-ALVO</span><strong>Adolescentes de 15 a 18 anos</strong></div>
         <div class="course-fact" role="listitem"><span>FERRAMENTA</span><strong>Autodesk Fusion 360</strong></div>
       </div>
+
+      <aside class="course-pilot-note reveal" aria-label="Preparação da equipe">
+        <span>ANTES DA OFERTA AO PÚBLICO</span>
+        <p>A equipe elaborou o roteiro, estudou os conceitos do Fusion 360, produziu o material de apoio e realizou uma capacitação-piloto para validar a metodologia e identificar ajustes.</p>
+      </aside>
     </section>
 
     <!-- Apresentação do material de apoio produzido para a aula -->
@@ -270,19 +370,35 @@
         <div class="material-copy">
           <p class="section-lead">O material de apoio foi desenvolvido para acompanhar a aula e permitir que os participantes revisem o conteúdo depois do minicurso.</p>
           <p>O guia completo já está disponível para consulta e download, permitindo retomar os conceitos e acompanhar novamente as etapas apresentadas durante a atividade.</p>
+          <ul class="material-topics" aria-label="Conteúdos do material">
+            <li>Fusion 360 e possibilidades profissionais</li>
+            <li>Esboços, planos e modelagem paramétrica</li>
+            <li>Ferramentas e fluxo de trabalho da oficina</li>
+            <li>Atalhos e caminhos para continuar aprendendo</li>
+          </ul>
         </div>
         <article class="material-panel">
-          <span>MATERIAL PRODUZIDO</span>
-          <h3>Guia de apoio do minicurso</h3>
-          <p>Conteúdo complementar sobre os conceitos e as etapas utilizadas durante a atividade prática no Fusion 360.</p>
-          <!-- Ações para consultar ou salvar o material de apoio -->
-          <div class="material-actions">
-            <a class="material-link material-link-primary" href="assets/mat%C3%A9rial%20de%20apoio.pdf" target="_blank" rel="noopener noreferrer" aria-label="Abrir PDF do material de apoio">
-              Abrir PDF <span aria-hidden="true">↗</span>
-            </a>
-            <a class="material-link" href="assets/mat%C3%A9rial%20de%20apoio.pdf" download="material-de-apoio-fusion-360.pdf">
-              Baixar arquivo <span aria-hidden="true">↓</span>
-            </a>
+          <!-- Prévia leve da capa; o PDF não é carregado automaticamente -->
+          <a class="material-preview" href="assets/mat%C3%A9rial%20de%20apoio.pdf" target="_blank" rel="noopener noreferrer" aria-label="Abrir o material de apoio completo em PDF">
+            <img src="assets/previews/material-apoio-capa.jpg" alt="Capa do material de apoio da oficina Fusion 360" width="1013" height="1432" loading="lazy" decoding="async">
+          </a>
+          <div class="material-panel-copy">
+            <div class="document-meta" aria-label="Informações do material">
+              <span>MATERIAL COMPLEMENTAR</span>
+              <span>PDF</span>
+              <span>7 PÁGINAS</span>
+            </div>
+            <h3>Guia de apoio do minicurso</h3>
+            <p>Conteúdo complementar sobre os conceitos e as etapas utilizadas durante a atividade prática no Fusion 360.</p>
+            <!-- Ações para consultar ou salvar o material de apoio -->
+            <div class="material-actions">
+              <a class="material-link material-link-primary" href="assets/mat%C3%A9rial%20de%20apoio.pdf" target="_blank" rel="noopener noreferrer" aria-label="Abrir PDF do material de apoio">
+                Abrir PDF <span aria-hidden="true">↗</span>
+              </a>
+              <a class="material-link" href="assets/mat%C3%A9rial%20de%20apoio.pdf" download="material-de-apoio-fusion-360.pdf">
+                Baixar arquivo <span aria-hidden="true">↓</span>
+              </a>
+            </div>
           </div>
         </article>
       </div>
@@ -298,11 +414,24 @@
         </div>
       </div>
 
+      <div class="results-overview reveal">
+        <p class="section-lead">Os registros atuais documentam a validação inicial da proposta, a preparação da equipe e as contribuições recebidas durante o desenvolvimento.</p>
+        <p>Esta etapa reúne evidências qualitativas já disponíveis. Os indicadores quantitativos serão publicados somente depois da aplicação às turmas e da análise dos questionários.</p>
+      </div>
+
+      <div class="results-evidence" role="list" aria-label="Evidências disponíveis até o momento">
+        <div class="results-evidence-item reveal" role="listitem"><span>ETAPA CONCLUÍDA</span><strong>Capacitação-piloto da equipe</strong></div>
+        <div class="results-evidence-item reveal" role="listitem"><span>INSTRUMENTOS PREPARADOS</span><strong>Questionários pré e pós-formação</strong></div>
+        <div class="results-evidence-item reveal" role="listitem"><span>REGISTROS DISPONÍVEIS</span><strong>Capacitação, orientação e mentoria</strong></div>
+      </div>
+
       <div class="result-grid" role="list" aria-label="Registros da aplicação do projeto">
         <!-- Registro da capacitação-piloto realizada com a equipe -->
         <article class="result-card result-card-accent result-card-featured reveal" role="listitem">
           <figure class="result-photo">
-            <img src="assets/WhatsApp%20Image%202026-08-01%20at%2018.58.25.jpeg" alt="Participantes da equipe durante a capacitação no Autodesk Fusion 360" loading="lazy" decoding="async">
+            <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar imagem da capacitação inicial da equipe">
+              <img src="assets/WhatsApp%20Image%202026-08-01%20at%2018.58.25.jpeg" alt="Participantes da equipe durante a capacitação no Autodesk Fusion 360" width="1600" height="897" loading="lazy" decoding="async">
+            </button>
             <figcaption>Capacitação inicial da equipe no Autodesk Fusion 360.</figcaption>
           </figure>
           <div class="result-featured-copy">
@@ -314,7 +443,9 @@
         <!-- Registro da orientação recebida durante o desenvolvimento -->
         <article class="result-card result-card-featured result-card-light reveal" role="listitem">
           <figure class="result-photo">
-            <img src="assets/orienta%C3%A7%C3%A3o.jpeg" alt="Equipe reunida durante uma orientação sobre o projeto" loading="lazy" decoding="async">
+            <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar imagem da orientação do projeto">
+              <img src="assets/orienta%C3%A7%C3%A3o.jpeg" alt="Equipe reunida durante uma orientação sobre o projeto" width="1600" height="897" loading="lazy" decoding="async">
+            </button>
             <figcaption>Orientação e acompanhamento do projeto.</figcaption>
           </figure>
           <div class="result-featured-copy">
@@ -326,7 +457,9 @@
         <!-- Registro da mentoria que contribuiu para o aprimoramento do projeto -->
         <article class="result-card result-card-accent result-card-featured reveal" role="listitem">
           <figure class="result-photo result-photo-mentoria">
-            <img src="assets/mentoriamaker.png" alt="Mentoria on-line sobre o planejamento e desenvolvimento do projeto" loading="lazy" decoding="async">
+            <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar imagem da mentoria do projeto">
+              <img src="assets/mentoriamaker.png" alt="Mentoria on-line sobre o planejamento e desenvolvimento do projeto" width="1855" height="848" loading="lazy" decoding="async">
+            </button>
             <figcaption>Mentoria e inspiração para o projeto.</figcaption>
           </figure>
           <div class="result-featured-copy">
@@ -339,9 +472,18 @@
       </div>
 
       <div class="result-note reveal">
-        <span>PRÓXIMA ATUALIZAÇÃO</span>
-        <p>Adicionar as impressões dos participantes e uma síntese dos resultados observados durante a capacitação.</p>
+        <span>PRÓXIMA ETAPA DE ANÁLISE</span>
+        <p>Depois da aplicação às turmas e da tabulação dos questionários, esta seção poderá receber indicadores quantitativos, gráficos e uma síntese comparativa. Até lá, os registros acima correspondem às evidências qualitativas já disponíveis.</p>
       </div>
+
+      <!--
+        Estrutura reservada para dados reais futuros. Manter oculta até a equipe
+        possuir números validados para participantes, pré-questionário,
+        pós-questionário, evolução, atividades, modelos e depoimentos.
+
+        <div class="results-metrics" aria-label="Indicadores quantitativos do projeto">...</div>
+        <div class="results-chart" aria-label="Gráfico comparativo dos questionários">...</div>
+      -->
     </section>
 
     <!-- Diário de bordo do projeto que será publicado como um documento PDF -->
@@ -370,6 +512,47 @@
           </a>
         </div>
       </article>
+
+      <!-- Resumo interno do diário para que o percurso não dependa apenas do Canva -->
+      <div class="journal-timeline-wrap reveal" aria-labelledby="journal-timeline-title">
+        <div class="journal-timeline-heading">
+          <p class="project-label">RESUMO DO DIÁRIO</p>
+          <h3 id="journal-timeline-title">Etapas registradas no Borke.</h3>
+          <p>O documento completo continua em produção; esta linha do tempo apresenta os principais marcos já documentados e a próxima etapa prevista.</p>
+        </div>
+        <ol class="journal-timeline">
+          <li>
+            <span>ETAPA 01</span>
+            <h4>Pesquisa</h4>
+            <p>Leitura dos três artigos que fundamentaram as decisões pedagógicas.</p>
+          </li>
+          <li>
+            <span>ETAPA 02</span>
+            <h4>Planejamento</h4>
+            <p>Organização da metodologia, do roteiro e da progressão do minicurso.</p>
+          </li>
+          <li>
+            <span>ETAPA 03</span>
+            <h4>Produção de materiais</h4>
+            <p>Criação de apresentações, guia de aprendizagem e atividades práticas.</p>
+          </li>
+          <li>
+            <span>ETAPA 04</span>
+            <h4>Capacitação-piloto</h4>
+            <p>Aplicação da oficina com a equipe para validar a proposta e identificar ajustes.</p>
+          </li>
+          <li>
+            <span>ETAPA 05</span>
+            <h4>Orientação e mentoria</h4>
+            <p>Revisão dos materiais, dos formulários e dos métodos de ensino.</p>
+          </li>
+          <li class="journal-timeline-next">
+            <span>PRÓXIMA ETAPA</span>
+            <h4>Aplicação e avaliação</h4>
+            <p>Oferta às turmas, questionários e análise das evidências produzidas.</p>
+          </li>
+        </ol>
+      </div>
     </section>
 
     <!-- Referências bibliográficas utilizadas no trabalho -->
@@ -386,25 +569,31 @@
         <article class="reference-row" role="listitem">
           <span>[01]</span>
           <div>
+            <p class="reference-meta">EVANGELISTA; OLIVEIRA • 2021</p>
             <!-- O título abre diretamente o PDF utilizado na pesquisa -->
             <h3><a class="reference-title-link" href="assets/artigos/evangelista-oliveira-2021.pdf" target="_blank" rel="noopener noreferrer">Estudo das consequências da aplicação de impressoras 3D no ambiente escolar</a></h3>
             <p>EVANGELISTA, Fábio Lombardo; OLIVEIRA, Lincoln Moura de. <em>Physicae Organum</em>, Brasília, v. 7, n. 1, p. 39–58, 2021. DOI: <a class="reference-doi" href="https://doi.org/10.26512/2446-564X2021e35946" target="_blank" rel="noopener noreferrer">10.26512/2446-564X2021e35946</a>.</p>
+            <div class="reference-actions"><a href="assets/artigos/evangelista-oliveira-2021.pdf" target="_blank" rel="noopener noreferrer">PDF <span aria-hidden="true">↗</span></a><a href="https://doi.org/10.26512/2446-564X2021e35946" target="_blank" rel="noopener noreferrer">Fonte digital <span aria-hidden="true">↗</span></a></div>
           </div>
         </article>
         <article class="reference-row" role="listitem">
           <span>[02]</span>
           <div>
+            <p class="reference-meta">CHANG; MELO; SILVA • 2025</p>
             <!-- Título vinculado ao PDF e DOI vinculado à publicação oficial -->
             <h3><a class="reference-title-link" href="assets/artigos/chang,melo,silva_compressed.pdf" target="_blank" rel="noopener noreferrer">Manufatura aditiva e o ambiente maker: sinergia para transformar o ensino de desenho técnico e modelagem 3D</a></h3>
             <p>CHANG, Victor Rasquinho Ho Te; MELO, Dominycke Guasti de; SILVA, Sinval Pedroso da. <em>Brazilian Journal of Production Engineering</em>, v. 11, n. 3, p. 53–75, 2025. DOI: <a class="reference-doi" href="https://doi.org/10.47456/bjpe.v11i3.48046" target="_blank" rel="noopener noreferrer">10.47456/bjpe.v11i3.48046</a>.</p>
+            <div class="reference-actions"><a href="assets/artigos/chang,melo,silva_compressed.pdf" target="_blank" rel="noopener noreferrer">PDF <span aria-hidden="true">↗</span></a><a href="https://doi.org/10.47456/bjpe.v11i3.48046" target="_blank" rel="noopener noreferrer">Fonte digital <span aria-hidden="true">↗</span></a></div>
           </div>
         </article>
         <article class="reference-row" role="listitem">
           <span>[03]</span>
           <div>
+            <p class="reference-meta">LAVICZA; ABAR; TEJERA • 2023</p>
             <!-- Título vinculado ao PDF e DOI vinculado à publicação oficial -->
             <h3><a class="reference-title-link" href="assets/artigos/Lavicza,Abar,Tejera.pdf" target="_blank" rel="noopener noreferrer">O pensamento geométrico espacial e sua articulação com a visualização e a manipulação de objetos em 3D</a></h3>
             <p>LAVICZA, Zsolt; ABAR, Celina Aparecida Almeida Pereira; TEJERA, Mathias. <em>Educação Matemática Pesquisa</em>, São Paulo, v. 25, n. 2, p. 258–277, 2023. DOI: <a class="reference-doi" href="https://doi.org/10.23925/1983-3156.2023v25i2p258-277" target="_blank" rel="noopener noreferrer">10.23925/1983-3156.2023v25i2p258-277</a>.</p>
+            <div class="reference-actions"><a href="assets/artigos/Lavicza,Abar,Tejera.pdf" target="_blank" rel="noopener noreferrer">PDF <span aria-hidden="true">↗</span></a><a href="https://doi.org/10.23925/1983-3156.2023v25i2p258-277" target="_blank" rel="noopener noreferrer">Fonte digital <span aria-hidden="true">↗</span></a></div>
           </div>
         </article>
       </div>
@@ -430,48 +619,52 @@
           <!-- Técnico centralizado no topo da organização da equipe -->
           <article role="listitem" class="participant-card participant-card-lead" data-participant-number="TÉC">
             <figure class="participant-photo">
-              <img src="assets/participantes/Helton%20(1).jpg" alt="Foto do técnico Helton Limberger" loading="lazy" decoding="async">
+              <img src="assets/participantes/Helton%20(1).jpg" alt="Foto do técnico Helton Limberger" width="2448" height="3264" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>TÉCNICO</span>
               <h3>Helton Limberger</h3>
               <p class="participant-description">Técnico de apoio ao projeto, responsável por orientar os participantes, prestar suporte durante a oficina e auxiliá-los no desenvolvimento das atividades práticas.</p>
+              <ul class="participant-tags" aria-label="Responsabilidades de Helton Limberger"><li>Orientação</li><li>Suporte</li><li>Oficina</li></ul>
             </div>
           </article>
 
           <!-- Participante posicionado à esquerda na base da organização -->
           <article role="listitem" class="participant-card participant-card-left" data-participant-number="02">
             <figure class="participant-photo">
-              <img src="assets/participantes/Renan.jpeg" alt="Foto do participante Renan Decker" loading="lazy" decoding="async">
+              <img src="assets/participantes/Renan.jpeg" alt="Foto do participante Renan Decker" width="539" height="459" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>PARTICIPANTE 02</span>
               <h3>Renan Decker</h3>
               <p class="participant-description">Organizador do projeto, responsável pela elaboração de materiais, como apresentações, documentos e demais conteúdos utilizados no desenvolvimento e na execução do projeto.</p>
+              <ul class="participant-tags" aria-label="Responsabilidades de Renan Decker"><li>Organização</li><li>Materiais</li><li>Conteúdo</li></ul>
             </div>
           </article>
 
           <!-- Participante centralizado na base da organização -->
           <article role="listitem" class="participant-card participant-card-center" data-participant-number="01">
             <figure class="participant-photo">
-              <img src="assets/participantes/Ryan.jpeg" alt="Foto do participante Ryan Batistel" loading="lazy" decoding="async">
+              <img src="assets/participantes/Ryan.jpeg" alt="Foto do participante Ryan Batistel" width="1224" height="1382" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>PARTICIPANTE 01</span>
               <h3>Ryan Batistel</h3>
               <p class="participant-description">Criador e coordenador do projeto, responsável pelo desenvolvimento e aplicação das aulas, além de contribuir com o design e a identidade visual do site.</p>
+              <ul class="participant-tags" aria-label="Responsabilidades de Ryan Batistel"><li>Coordenação</li><li>Aulas</li><li>Design</li></ul>
             </div>
           </article>
 
           <!-- Participante posicionado à direita na base da organização -->
           <article role="listitem" class="participant-card participant-card-right" data-participant-number="03">
             <figure class="participant-photo">
-              <img src="assets/participantes/Arthur.jpg" alt="Foto do participante Arthur Dutra" loading="lazy" decoding="async">
+              <img src="assets/participantes/Arthur.jpg" alt="Foto do participante Arthur Dutra" width="1394" height="2305" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>PARTICIPANTE 03</span>
               <h3>Arthur Dutra</h3>
               <p class="participant-description">Responsável pela programação do site do projeto, que serviu como plataforma de apoio ao minicurso e ambiente de testes para o desenvolvimento e aperfeiçoamento das diferentes versões da oficina.</p>
+              <ul class="participant-tags" aria-label="Responsabilidades de Arthur Dutra"><li>Programação</li><li>Plataforma</li><li>Testes</li></ul>
             </div>
           </article>
         </div>
@@ -486,10 +679,22 @@
     <p class="image-lightbox-caption" id="image-lightbox-caption"></p>
   </div>
 
-  <!-- Rodapé com identificação e ano atualizado automaticamente -->
-  <footer>
-    <div class="brand"><span class="brand-mark small" aria-hidden="true">F</span><span>Projeto FECCI</span></div>
-    <p>Em desenvolvimento pela nossa equipe • <span id="year">2026</span></p>
+  <!-- Rodapé discreto com identificação, contexto e acessos rápidos -->
+  <footer class="site-footer">
+    <div class="footer-project">
+      <div class="brand"><span class="brand-mark small" aria-hidden="true">F</span><span>Projeto FECCI</span></div>
+      <p>Competências STEAM por meio da prototipagem 3D com Autodesk Fusion 360.</p>
+    </div>
+    <nav class="footer-links" aria-label="Links rápidos do rodapé">
+      <a href="#projeto">Projeto</a>
+      <a href="#minicurso">Minicurso</a>
+      <a href="#resultados">Resultados</a>
+      <a href="#diario">Diário</a>
+    </nav>
+    <div class="footer-meta">
+      <p>Colégio Estadual do Paraná • FECCI <span id="year">2026</span></p>
+      <a href="https://github.com/Ryan20014737472/Fecci-fusion-360" target="_blank" rel="noopener noreferrer">Repositório no GitHub <span aria-hidden="true">↗</span></a>
+    </div>
   </footer>
   <!-- Mapeamento dos módulos Three.js utilizados pelo visualizador -->
   <script type="importmap">
@@ -503,6 +708,6 @@
   <!-- Controla o carregamento e a interação com o modelo STL -->
   <script type="module" src="model-viewer.js?v=9"></script>
   <!-- Controla menu, animações de entrada, ano do rodapé e lightbox -->
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
