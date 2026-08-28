@@ -2187,12 +2187,16 @@ h2 {
 }
 
 .participant-card-lead .participant-photo img {
-  object-position: center 28%;
+  object-position: center 44%;
 }
 
-.participant-card-center .participant-photo img,
-.participant-card-right .participant-photo img {
+.participant-card-center .participant-photo img {
   object-position: center 24%;
+}
+
+/* Ajusta individualmente a foto vertical do Arthur dentro do recorte horizontal */
+.participant-card-right .participant-photo img {
+  object-position: center 30%;
 }
 
 .participant-card:hover .participant-photo img {
