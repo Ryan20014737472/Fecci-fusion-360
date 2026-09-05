@@ -545,7 +545,8 @@ Todas as animações visuais estão concentradas em `assets/js/animations.js`. O
 
 - a capa entra na ordem: categoria, título, texto, modelo 3D e botões;
 - números e títulos das seções surgem em uma sequência curta;
-- cards de pesquisa, minicurso, resultados, diário, referências e equipe entram em pequenos lotes;
+- cards de pesquisa, minicurso, resultados, diário e referências entram em pequenos lotes;
+- as fotos da equipe aparecem em sequência com um efeito curto de figurinha sendo colada;
 - prévias de documentos e fotos importantes recebem uma revelação discreta;
 - as órbitas decorativas da capa possuem parallax leve apenas no desktop com mouse;
 - `clearProps` remove os estilos inline ao final, preservando os efeitos de hover definidos no CSS.
@@ -676,7 +677,7 @@ O HTML carrega os arquivos com sufixos como:
 <link rel="stylesheet" href="style.css?v=31">
 <script type="module" src="model-viewer.js?v=9"></script>
 <script src="script.js?v=6"></script>
-<script src="assets/js/animations.js?v=3"></script>
+<script src="assets/js/animations.js?v=4"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
@@ -686,7 +687,7 @@ Após mudar um desses arquivos, aumente seu número:
 - `style.css?v=31` → `style.css?v=32`;
 - `model-viewer.js?v=9` → `model-viewer.js?v=10`;
 - `script.js?v=6` → `script.js?v=7`;
-- `animations.js?v=3` → `animations.js?v=4`.
+- `animations.js?v=4` → `animations.js?v=5`.
 
 O número não altera o nome real do arquivo.
 
@@ -884,3 +885,4 @@ Antes de mudar qualquer trecho, descubra a relação entre os arquivos:
 - se substituir o STL, confirme escala, orientação, componentes e materiais.
 
 Seguindo essas relações, o site pode evoluir sem perder o estilo, a responsividade ou as funções que já estão prontas.
+

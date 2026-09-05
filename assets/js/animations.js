@@ -162,6 +162,51 @@
         });
       };
 
+      /**
+       * Faz as fotos da equipe entrarem como figurinhas sendo coladas.
+       * O movimento acontece no <figure>, preservando o enquadramento e o
+       * efeito de zoom que o CSS aplica diretamente à imagem no hover.
+       */
+      const animateParticipantStickers = () => {
+        const photos = markElements(".participant-photo").filter(isStillAhead);
+
+        if (!photos.length) {
+          return;
+        }
+
+        const rotations = isMobile
+          ? [-1.1, 1, -0.8, 1]
+          : [-5.5, 4.5, -4, 5];
+
+        gsap.set(photos, {
+          opacity: 0,
+          y: isMobile ? 12 : 24,
+          scale: isMobile ? 0.94 : 0.84,
+          rotation: (index) => rotations[index % rotations.length],
+          transformOrigin: "50% 60%",
+          willChange: "transform, opacity",
+        });
+
+        ScrollTrigger.batch(photos, {
+          start: isMobile ? "top 94%" : triggerStart,
+          once: true,
+          batchMax: isMobile ? 1 : 3,
+          onEnter: (batch) => {
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              rotation: 0,
+              duration: isMobile ? 0.58 : 0.82,
+              stagger: isMobile ? 0 : 0.1,
+              ease: isMobile ? "power2.out" : "back.out(1.45)",
+              overwrite: "auto",
+              clearProps: "opacity,transform,transformOrigin,willChange",
+            });
+          },
+        });
+      };
+
       /* Entrada cinematográfica e contida da capa. */
       const heroEyebrow = document.querySelector(".hero-copy .eyebrow");
       const heroTitle = document.querySelector(".hero-copy h1");
@@ -323,8 +368,10 @@
         [".result-card", 3],
         [".journal-timeline > li", 3],
         [".reference-row", 3],
-        [".participant-card", 3],
       ].forEach(([selector, batchMax]) => animateBatch(selector, { batchMax }));
+
+      /* As fotos da equipe recebem uma entrada própria em formato de figurinha. */
+      animateParticipantStickers();
 
       /* Revelação visual reservada às imagens editoriais mais importantes. */
       const documentPreviews = [
@@ -447,3 +494,4 @@
     window.addEventListener("load", refreshTriggers, { once: true });
   }
 })();
+
