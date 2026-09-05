@@ -440,23 +440,27 @@ h1 em {
 }
 
 .orbit {
+  --orbit-angle: 0deg;
+  --orbit-shift-x: 0px;
+  --orbit-shift-y: 0px;
   position: absolute;
   z-index: 0;
   border: 1px solid rgba(255, 106, 33, 0.26);
   border-radius: 50%;
   pointer-events: none;
+  transform: translate3d(var(--orbit-shift-x), var(--orbit-shift-y), 0) rotate(var(--orbit-angle));
 }
 
 .orbit-one {
+  --orbit-angle: -22deg;
   width: 470px;
   height: 210px;
-  transform: rotate(-22deg);
 }
 
 .orbit-two {
+  --orbit-angle: 48deg;
   width: 330px;
   height: 430px;
-  transform: rotate(48deg);
 }
 
 /* Visualizador interativo do arquivo STL */
@@ -1127,7 +1131,7 @@ h2 {
 .course-module:hover {
   border-color: rgba(174, 70, 19, 0.48);
   box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.006);
 }
 
 .course-module-number {
@@ -1965,12 +1969,14 @@ h2 {
   border: 1px solid var(--line);
   border-radius: var(--radius-small);
   background: rgba(255, 255, 255, 0.018);
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .reference-row:hover {
   border-color: rgba(255, 106, 33, 0.34);
   background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+  transform: translateY(-2px) scale(1.002);
 }
 
 .reference-row > span {
@@ -2157,7 +2163,7 @@ h2 {
 .participant-card:hover {
   border-color: rgba(174, 70, 19, 0.38);
   box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.006);
 }
 
 .participant-photo {
@@ -2329,19 +2335,8 @@ h2 {
   line-height: 1.6;
 }
 
-/* Conteúdo visível por padrão; o JavaScript ativa a animação com segurança */
+/* O conteúdo fica visível por padrão caso a biblioteca de animação não carregue */
 .reveal {
-  opacity: 1;
-  transform: none;
-}
-
-.reveal-enhanced .reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-
-.reveal-enhanced .reveal.visible {
   opacity: 1;
   transform: none;
 }
@@ -3130,6 +3125,7 @@ body.lightbox-open {
   .fecci-document-preview:hover img,
   .journal-link:hover,
   .reference-actions a:hover,
+  .reference-row:hover,
   .course-module:hover,
   .project-journey-list a:hover,
   .result-card-featured:hover .result-photo img,
@@ -3163,10 +3159,13 @@ body.lightbox-open {
 
 /* Garante que a impressão não dependa do ponto já percorrido na página */
 @media print {
-  .reveal-enhanced .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .reveal,
+  .motion-item {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
   }
 }
 
@@ -3176,10 +3175,13 @@ body.lightbox-open {
     scroll-behavior: auto;
   }
 
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
+  .reveal,
+  .motion-item {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
   }
 
   .model-hint,
@@ -3195,6 +3197,7 @@ body.lightbox-open {
   .material-preview img,
   .fecci-document-preview img,
   .journal-link,
+  .reference-row,
   .reference-title-link,
   .reference-doi,
   .reference-actions a,
@@ -3221,6 +3224,7 @@ body.lightbox-open {
   .fecci-document-preview:hover img,
   .journal-link:hover,
   .reference-actions a:hover,
+  .reference-row:hover,
   .course-module:hover,
   .project-journey-list a:hover,
   .result-card-featured:hover .result-photo img,

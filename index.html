@@ -28,7 +28,7 @@
   <meta name="twitter:image:alt" content="Logo do Clube Maker do projeto FECCI Fusion 360">
   <title>Projeto FECCI | Competências STEAM com Fusion 360</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="style.css?v=30">
+  <link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
   <!-- Atalho de teclado para alcançar diretamente o conteúdo principal -->
@@ -707,7 +707,12 @@
   </script>
   <!-- Controla o carregamento e a interação com o modelo STL -->
   <script type="module" src="model-viewer.js?v=9"></script>
-  <!-- Controla menu, animações de entrada, ano do rodapé e lightbox -->
-  <script src="script.js?v=5"></script>
+  <!-- Bibliotecas leves utilizadas exclusivamente nas animações progressivas -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+  <!-- Controla menu, navegação ativa, ano do rodapé e lightbox -->
+  <script src="script.js?v=6" defer></script>
+  <!-- Centraliza as animações da interface sem misturá-las ao restante da lógica -->
+  <script src="assets/js/animations.js?v=1" defer></script>
 </body>
 </html>

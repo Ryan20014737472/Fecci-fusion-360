@@ -25,11 +25,12 @@ O projeto é um site estático. Isso significa que não utiliza banco de dados n
 
 - **HTML5:** estrutura e conteúdo em `index.html`.
 - **CSS3:** aparência e responsividade em `style.css`.
-- **JavaScript:** menus, seção ativa, animações e ampliação de imagens em `script.js`.
+- **JavaScript:** menus, seção ativa e ampliação de imagens em `script.js`.
+- **GSAP + ScrollTrigger:** entradas, sequências e parallax organizados em `assets/js/animations.js`.
 - **Three.js:** renderização do modelo 3D em `model-viewer.js`.
 - **GitHub Pages:** publicação do site.
 
-A biblioteca Three.js é carregada pela internet através do `jsDelivr`. Por isso, o modelo 3D precisa de conexão com a internet mesmo quando os outros arquivos estão salvos no computador.
+Three.js, GSAP e ScrollTrigger são carregados pela internet através do `jsDelivr`. Por isso, o modelo 3D e as animações avançadas precisam de conexão quando o site é testado localmente. Se GSAP não carregar, o conteúdo continua visível e todas as funções principais permanecem disponíveis.
 
 ## 3. Estrutura dos arquivos
 
@@ -37,10 +38,12 @@ A biblioteca Three.js é carregada pela internet através do `jsDelivr`. Por iss
 Fecci-fusion-360/
 ├── index.html                 # Todo o conteúdo e a estrutura da página
 ├── style.css                  # Cores, tamanhos, posições e responsividade
-├── script.js                  # Menu, animações e visualizador de imagens
+├── script.js                  # Menu, seção ativa e visualizador de imagens
 ├── model-viewer.js            # Cena, câmera, luzes e controles do modelo 3D
 ├── README.md                  # Este manual
 └── assets/
+    ├── js/
+    │   └── animations.js      # Animações GSAP, ScrollTrigger e parallax
     ├── fusion.stl             # Modelo 3D exibido no início
     ├── fusion-360-logo.jpg    # Logo do Autodesk Fusion 360
     ├── maker logo.png         # Logo do Clube Maker
@@ -182,7 +185,7 @@ Use uma seção existente como modelo e mantenha a estrutura visual. Exemplo de 
 
 Para uma seção escura, retire `light-section` e use as classes de uma seção escura existente como referência.
 
-A classe `reveal` faz o elemento aparecer suavemente quando entra na tela. Ela depende do `IntersectionObserver` presente em `script.js`.
+A classe `reveal` mantém compatibilidade com a estrutura visual e garante que o conteúdo continue visível por padrão. As animações ficam em `assets/js/animations.js` e reconhecem as classes dos componentes existentes, como `.article-card`, `.course-module`, `.result-card` e `.participant-card`.
 
 Depois de criar uma seção:
 
@@ -461,8 +464,8 @@ Não altere `position`, `grid-template-columns` ou `overflow` sem testar tamanho
 | `.result-card` | cartões dos registros |
 | `.journal-timeline` | resumo interno do diário Borke |
 | `.participant-card` | cartões da equipe |
-| `.reveal` | estado inicial da animação de entrada |
-| `.visible` | estado exibido após a animação |
+| `.reveal` | compatibilidade e conteúdo visível caso a animação não carregue |
+| `.motion-item` | marca aplicada automaticamente aos elementos animados |
 
 ### Como mudar a barra de rolagem
 
@@ -500,7 +503,7 @@ O menu móvel depende das classes `.menu-button`, `.nav` e `.nav.open`. O submen
 
 ## 16. Como funciona o `script.js`
 
-O arquivo possui cinco responsabilidades principais.
+O arquivo possui quatro responsabilidades principais.
 
 ### Menu móvel
 
@@ -511,10 +514,6 @@ O botão `.nav-more-button` controla o submenu **Mais** no desktop. Ele fecha ao
 ### Cabeçalho e seção atual
 
 Durante a rolagem, o script adiciona `.is-scrolled` ao cabeçalho e usa os links com `data-nav-link` para marcar o destino visível com `aria-current="location"`. Os links complementares também ativam discretamente o botão **Mais**.
-
-### Animação de entrada
-
-O `IntersectionObserver` observa todos os elementos com `.reveal`. Quando eles aparecem na tela, recebe a classe `.visible` e deixa de ser observado.
 
 ### Ano do rodapé
 
@@ -538,7 +537,38 @@ O visitante pode fechar a imagem:
 
 Para que uma nova imagem de resultado receba essa função automaticamente, use o botão `.result-photo-trigger` com o atributo `data-lightbox-trigger` dentro de `.result-photo`.
 
-## 17. Como funciona o modelo 3D
+## 17. Como funciona o `animations.js`
+
+Todas as animações visuais estão concentradas em `assets/js/animations.js`. O arquivo verifica primeiro se GSAP e ScrollTrigger carregaram. Somente depois dessa verificação ele aplica estilos temporários; assim, uma falha de rede nunca deixa textos ou cards invisíveis.
+
+### O que é animado
+
+- a capa entra na ordem: categoria, título, texto, modelo 3D e botões;
+- números e títulos das seções surgem em uma sequência curta;
+- cards de pesquisa, minicurso, resultados, diário, referências e equipe entram em pequenos lotes;
+- prévias de documentos e fotos importantes recebem uma revelação discreta;
+- as órbitas decorativas da capa possuem parallax leve apenas no desktop com mouse;
+- `clearProps` remove os estilos inline ao final, preservando os efeitos de hover definidos no CSS.
+
+### Celular, desempenho e acessibilidade
+
+Em telas de até 800 px, os deslocamentos e durações são menores, os cards entram individualmente e o parallax é desativado. A preferência `prefers-reduced-motion: reduce` remove as entradas, o parallax e as transições não essenciais. A impressão também força todos os elementos a permanecerem visíveis.
+
+As animações usam apenas `opacity`, `transform` e, em poucas imagens, `clip-path`. Não há rolagem artificial, seções fixadas ou dezenas de animações iniciadas simultaneamente.
+
+### Como animar um componente novo
+
+Se o novo componente reutilizar uma classe existente, como `.article-card` ou `.result-card`, ele será reconhecido automaticamente. Para uma classe inédita:
+
+1. abra `assets/js/animations.js`;
+2. para um bloco único, acrescente o seletor à lista de blocos editoriais;
+3. para vários cards, acrescente `[".nova-classe", 3]` à lista usada por `animateBatch`;
+4. preserve o conteúdo visível no CSS e deixe o JavaScript controlar apenas o estado temporário;
+5. teste com redução de movimento ativada e em uma tela de até 800 px.
+
+Não adicione `opacity: 0` diretamente ao CSS permanente. Isso esconderia o conteúdo caso a biblioteca externa falhasse.
+
+## 18. Como funciona o modelo 3D
 
 O visualizador é formado por três partes:
 
@@ -638,27 +668,29 @@ Antes de substituir o STL, exporte as letras e o corpo como sólidos separados o
 
 Não use um `pixelRatio` muito alto, pois pode deixar o site lento em celulares.
 
-## 18. Cache e números de versão
+## 19. Cache e números de versão
 
 O HTML carrega os arquivos com sufixos como:
 
 ```html
-<link rel="stylesheet" href="style.css?v=29">
+<link rel="stylesheet" href="style.css?v=31">
 <script type="module" src="model-viewer.js?v=9"></script>
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
+<script src="assets/js/animations.js?v=1"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
 
 Após mudar um desses arquivos, aumente seu número:
 
-- `style.css?v=29` → `style.css?v=30`;
+- `style.css?v=31` → `style.css?v=32`;
 - `model-viewer.js?v=9` → `model-viewer.js?v=10`;
-- `script.js?v=5` → `script.js?v=6`.
+- `script.js?v=6` → `script.js?v=7`;
+- `animations.js?v=1` → `animations.js?v=2`.
 
 O número não altera o nome real do arquivo.
 
-## 19. Comentários no código
+## 20. Comentários no código
 
 O projeto usa comentários para sinalizar a função de cada bloco.
 
@@ -682,7 +714,7 @@ Em JavaScript:
 
 Ao adicionar uma nova parte, inclua um comentário curto explicando sua finalidade. Não use `<!-- -->` dentro de CSS ou JavaScript, pois essa sintaxe é exclusiva do HTML.
 
-## 20. Acessibilidade
+## 21. Acessibilidade
 
 Preserve estes cuidados:
 
@@ -696,7 +728,7 @@ Preserve estes cuidados:
 - links que abrem nova aba devem deixar clara sua função;
 - não dependa apenas de cor para transmitir informação.
 
-## 21. Como testar localmente
+## 22. Como testar localmente
 
 Evite abrir `index.html` somente com dois cliques. Módulos JavaScript e arquivos 3D podem ser bloqueados pelo protocolo `file://`.
 
@@ -720,13 +752,15 @@ Checklist antes de publicar:
 - o modelo gira com mouse e toque;
 - após 5 segundos ele retorna e gira sozinho;
 - o menu móvel abre, fecha e não cobre conteúdo importante;
+- as animações não escondem conteúdo se a CDN for bloqueada;
+- com redução de movimento ativada, os elementos aparecem sem deslocamento ou parallax;
 - as imagens dos resultados ampliam e fecham corretamente;
 - não existe rolagem horizontal;
 - textos não ultrapassam cartões;
 - nomes e descrições dos participantes estão corretos;
 - o console do navegador não apresenta erros.
 
-## 22. Publicação no GitHub Pages
+## 23. Publicação no GitHub Pages
 
 O endereço publicado é:
 
@@ -752,7 +786,7 @@ Se a publicação deixar de funcionar, confira no GitHub:
 2. **Pages**;
 3. a fonte deve apontar para a branch e pasta usadas pelo projeto, normalmente `main` e `/ (root)`.
 
-## 23. Problemas comuns
+## 24. Problemas comuns
 
 ### A imagem não aparece
 
@@ -817,7 +851,7 @@ Crie uma regra específica para aquela imagem, por exemplo:
 
 Prefira nomes de arquivo em letras minúsculas para que seletores e caminhos sejam previsíveis.
 
-## 24. Boas práticas para futuras alterações
+## 25. Boas práticas para futuras alterações
 
 - faça uma mudança por vez e teste antes da próxima;
 - copie componentes existentes para preservar a identidade visual;
@@ -839,7 +873,7 @@ Ajusta enquadramento do modelo 3D no celular
 Inclui versão final do diário Borke
 ```
 
-## 25. Regra de segurança antes de editar
+## 26. Regra de segurança antes de editar
 
 Antes de mudar qualquer trecho, descubra a relação entre os arquivos:
 

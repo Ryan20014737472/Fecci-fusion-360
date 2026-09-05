@@ -1,7 +1,5 @@
 // Mantém todas as funções auxiliares fora do escopo global da página
 (() => {
-  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-
   // Seleciona os elementos utilizados pelo menu responsivo
   const menuButton = document.querySelector('.menu-button');
   const nav = document.querySelector('.nav');
@@ -174,47 +172,7 @@
     window.addEventListener('hashchange', requestNavigationUpdate);
   }
 
-  // Revela os elementos quando eles entram na área visível da página
-  const revealElements = document.querySelectorAll('.reveal');
-
-  if (revealElements.length > 0) {
-    const revealAll = () => {
-      document.documentElement.classList.remove('reveal-enhanced');
-      revealElements.forEach((element) => element.classList.add('visible'));
-    };
-    const observerAvailable =
-      typeof window.IntersectionObserver === 'function';
-
-    if (reducedMotionQuery.matches || !observerAvailable) {
-      // Mantém tudo visível quando animação ou observação não são apropriadas
-      revealAll();
-    } else {
-      let observer;
-
-      try {
-        observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, {
-          threshold: 0.08,
-          rootMargin: '0px 0px -6% 0px'
-        });
-
-        // Esconde os itens somente depois que o observador foi criado
-        document.documentElement.classList.add('reveal-enhanced');
-        revealElements.forEach((element) => observer.observe(element));
-      } catch (error) {
-        // Uma falha isolada na animação não interrompe ano, menu ou lightbox
-        observer?.disconnect();
-        revealAll();
-        console.warn('Animações de entrada desativadas:', error);
-      }
-    }
-  }
+  // As animações visuais ficam isoladas em assets/js/animations.js
 
   // Mantém o ano apresentado no rodapé sempre atualizado
   const year = document.getElementById('year');
