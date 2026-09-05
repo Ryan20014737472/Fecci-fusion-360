@@ -175,7 +175,11 @@
         heroActions,
         heroArt,
       ]);
-      const shouldSkipHero = Boolean(window.location.hash) || window.scrollY > 80;
+      const initialHash = window.location.hash;
+      const shouldSkipHero = (
+        Boolean(initialHash)
+        && initialHash !== "#inicio"
+      ) || window.scrollY > 80;
 
       if (shouldSkipHero) {
         clearMotionStyles(heroParts);
