@@ -676,7 +676,7 @@ O HTML carrega os arquivos com sufixos como:
 <link rel="stylesheet" href="style.css?v=31">
 <script type="module" src="model-viewer.js?v=9"></script>
 <script src="script.js?v=6"></script>
-<script src="assets/js/animations.js?v=1"></script>
+<script src="assets/js/animations.js?v=2"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
@@ -686,7 +686,7 @@ Após mudar um desses arquivos, aumente seu número:
 - `style.css?v=31` → `style.css?v=32`;
 - `model-viewer.js?v=9` → `model-viewer.js?v=10`;
 - `script.js?v=6` → `script.js?v=7`;
-- `animations.js?v=1` → `animations.js?v=2`.
+- `animations.js?v=2` → `animations.js?v=3`.
 
 O número não altera o nome real do arquivo.
 

@@ -76,10 +76,10 @@
         return undefined;
       }
 
-      const distance = isMobile ? 12 : 24;
-      const duration = isMobile ? 0.5 : 0.68;
-      const stagger = isMobile ? 0.055 : 0.09;
-      const triggerStart = isMobile ? "top 92%" : "top 86%";
+      const distance = isMobile ? 18 : 38;
+      const duration = isMobile ? 0.58 : 0.78;
+      const stagger = isMobile ? 0.07 : 0.12;
+      const triggerStart = isMobile ? "top 93%" : "top 88%";
       const ease = "power2.out";
 
       /** Cria uma entrada única e curta para um elemento ou pequeno grupo. */
@@ -139,6 +139,7 @@
         gsap.set(elements, {
           opacity: 0,
           y: options.y ?? distance,
+          scale: isMobile ? 0.99 : 0.975,
           willChange: "transform, opacity",
         });
 
@@ -150,6 +151,7 @@
             gsap.to(batch, {
               opacity: 1,
               y: 0,
+              scale: 1,
               duration: options.duration ?? duration,
               stagger: options.stagger ?? stagger,
               ease: options.ease || ease,
@@ -183,16 +185,23 @@
 
         gsap.set(copyParts, {
           opacity: 0,
-          y: isMobile ? 14 : 26,
+          y: isMobile ? 20 : 46,
           willChange: "transform, opacity",
         });
+
+        if (heroTitle) {
+          gsap.set(heroTitle, {
+            clipPath: "inset(0% 0% 100% 0%)",
+            willChange: "transform, opacity, clip-path",
+          });
+        }
 
         if (heroArt) {
           gsap.set(heroArt, {
             opacity: 0,
-            x: isMobile ? 0 : 34,
-            y: isMobile ? 18 : 0,
-            scale: 0.985,
+            x: isMobile ? 0 : 56,
+            y: isMobile ? 24 : 0,
+            scale: isMobile ? 0.975 : 0.95,
             willChange: "transform, opacity",
           });
         }
@@ -201,7 +210,7 @@
           heroTimeline.to(heroEyebrow, {
             opacity: 1,
             y: 0,
-            duration: 0.42,
+            duration: 0.5,
             clearProps: clearProperties,
           });
         }
@@ -210,18 +219,19 @@
           heroTimeline.to(heroTitle, {
             opacity: 1,
             y: 0,
-            duration: isMobile ? 0.62 : 0.78,
+            clipPath: "inset(0% 0% 0% 0%)",
+            duration: isMobile ? 0.76 : 1,
             clearProps: clearProperties,
-          }, "-=0.22");
+          }, "-=0.18");
         }
 
         if (heroText) {
           heroTimeline.to(heroText, {
             opacity: 1,
             y: 0,
-            duration: 0.54,
+            duration: 0.62,
             clearProps: clearProperties,
-          }, "-=0.34");
+          }, "-=0.3");
         }
 
         if (heroArt) {
@@ -230,7 +240,7 @@
             x: 0,
             y: 0,
             scale: 1,
-            duration: isMobile ? 0.64 : 0.86,
+            duration: isMobile ? 0.78 : 1.06,
             clearProps: clearProperties,
           }, 0.18);
         }
@@ -239,7 +249,7 @@
           heroTimeline.to(heroActions, {
             opacity: 1,
             y: 0,
-            duration: 0.46,
+            duration: 0.54,
             clearProps: clearProperties,
           }, ">-0.06");
         }
@@ -256,12 +266,14 @@
 
         gsap.set(parts, {
           opacity: 0,
+          x: isMobile ? 0 : -12,
           y: distance,
           willChange: "transform, opacity",
         });
 
         gsap.to(parts, {
           opacity: 1,
+          x: 0,
           y: 0,
           duration,
           stagger: isMobile ? 0.05 : 0.08,
@@ -335,13 +347,13 @@
 
             gsap.set(container, {
               opacity: 0,
-              clipPath: "inset(0% 0% 12% 0%)",
+              clipPath: "inset(0% 0% 100% 0%)",
               willChange: "opacity, clip-path",
             });
 
             if (image) {
               gsap.set(image, {
-                scale: 1.035,
+                scale: 1.055,
                 willChange: "transform",
               });
             }
@@ -357,7 +369,7 @@
             imageTimeline.to(container, {
               opacity: 1,
               clipPath: "inset(0% 0% 0% 0%)",
-              duration: 0.76,
+              duration: 0.92,
               ease,
               clearProps: "opacity,clipPath,willChange",
             });
@@ -365,7 +377,7 @@
             if (image) {
               imageTimeline.to(image, {
                 scale: 1,
-                duration: 0.9,
+                duration: 1.08,
                 ease,
                 clearProps: "transform,willChange",
               }, 0);
@@ -377,8 +389,8 @@
       /* Parallax discreto somente em elementos decorativos e ponteiro preciso. */
       if (canParallax) {
         gsap.to(".orbit-one", {
-          "--orbit-shift-x": "8px",
-          "--orbit-shift-y": "-18px",
+          "--orbit-shift-x": "12px",
+          "--orbit-shift-y": "-30px",
           ease: "none",
           scrollTrigger: {
             trigger: ".hero",
@@ -389,8 +401,8 @@
         });
 
         gsap.to(".orbit-two", {
-          "--orbit-shift-x": "-6px",
-          "--orbit-shift-y": "14px",
+          "--orbit-shift-x": "-10px",
+          "--orbit-shift-y": "24px",
           ease: "none",
           scrollTrigger: {
             trigger: ".hero",
