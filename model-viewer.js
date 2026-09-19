@@ -7,6 +7,8 @@ if (viewer) {
   const modelHint = viewer.querySelector('.model-hint');
   const modelFallback = viewer.querySelector('.model-fallback');
   const motionToggle = viewer.querySelector('.model-motion-toggle');
+  let loadingFailed = false;
+  let loadingDeadline = null;
 
   // O fallback permanece visível apenas se este arquivo não puder executar
   if (modelFallback) {
@@ -19,6 +21,8 @@ if (viewer) {
 
   // Mostra uma mensagem amigável para qualquer falha de importação, WebGL ou STL
   const showError = (error) => {
+    loadingFailed = true;
+    window.clearTimeout(loadingDeadline);
     if (error) {
       console.error('Falha no visualizador 3D:', error);
     }
@@ -36,7 +40,7 @@ if (viewer) {
 
     if (loadingMessage) {
       loadingMessage.hidden = false;
-      loadingMessage.textContent = 'Não foi possível carregar o modelo 3D.';
+      loadingMessage.textContent = 'Não foi possível carregar o modelo 3D. Recarregue a página para tentar novamente.';
       loadingMessage.classList.add('is-error');
     }
   };
@@ -45,6 +49,13 @@ if (viewer) {
   if (!(canvas instanceof HTMLCanvasElement) || !loadingMessage) {
     showError(new Error('Estrutura do visualizador 3D incompleta.'));
   } else {
+    // Um pedido de rede pendurado não pode manter o estado de espera para sempre.
+    // A rotina de falha passa a encerrar a cena assim que ela estiver disponível.
+    let failLoading = showError;
+    loadingDeadline = window.setTimeout(() => {
+      failLoading(new Error('O carregamento do visualizador excedeu 30 segundos.'));
+    }, 30000);
+
     // Importações dinâmicas permitem informar o erro caso a CDN não responda.
     // A inicialização começa depois da primeira pintura para não disputar
     // recursos com o conteúdo principal da página.
@@ -54,6 +65,8 @@ if (viewer) {
       import('three/addons/loaders/STLLoader.js')
     ])
       .then(([THREE, controlsModule, loaderModule]) => {
+        // Descarta imports que chegaram depois do prazo, sem reativar o canvas.
+        if (loadingFailed) return;
         const { OrbitControls } = controlsModule;
         const { STLLoader } = loaderModule;
 
@@ -559,6 +572,7 @@ if (viewer) {
             controls.enabled = false;
             showError(error);
           };
+          failLoading = failViewer;
 
           // Informa a perda do contexto gráfico em vez de manter um canvas congelado
           canvas.addEventListener('webglcontextlost', (event) => {
@@ -572,6 +586,11 @@ if (viewer) {
           loader.load(
             'assets/fusion.stl',
             (geometry) => {
+              // Uma resposta tardia não deve desfazer um erro/timeout já informado.
+              if (loadingFailed || viewerFailed) {
+                geometry.dispose();
+                return;
+              }
               try {
                 const position = geometry.getAttribute('position');
 
@@ -775,6 +794,7 @@ if (viewer) {
                 modelRadius = scaledRadius;
                 fitCameraToModel();
 
+                window.clearTimeout(loadingDeadline);
                 loadingMessage.hidden = true;
                 loadingMessage.classList.remove('is-error');
 
@@ -872,4 +892,3 @@ if (viewer) {
     }
   }
 }
-

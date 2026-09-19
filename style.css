@@ -2355,6 +2355,11 @@ h2 {
   transform: none;
 }
 
+/* Evita que o hover CSS dispute o transform durante uma entrada GSAP. */
+.motion-item.is-animating {
+  transition: none !important;
+}
+
 /* Ajustes para telas intermediárias e tablets */
 @media (max-width: 1050px) and (min-width: 801px) {
   .header {
@@ -3252,4 +3257,3 @@ body.lightbox-open {
     transform: translateX(-50%);
   }
 }
-

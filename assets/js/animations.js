@@ -1,497 +1,259 @@
 /*
- * Animações progressivas do site FECCI Fusion 360.
- *
- * O conteúdo permanece visível por padrão. Este arquivo só assume o controle
- * quando GSAP e ScrollTrigger carregam corretamente, preservando o site caso
- * a CDN esteja indisponível ou o JavaScript seja desativado.
+ * Animações progressivas FECCI Fusion 360.
+ * O conteúdo continua visível se a CDN falhar. As entradas usam somente
+ * transform e opacity; nenhum elemento distante fica escondido ou promovido
+ * antecipadamente a uma camada de composição.
  */
 (() => {
-  const gsap = window.gsap;
-  const ScrollTrigger = window.ScrollTrigger;
+  const { gsap, ScrollTrigger } = window;
+  if (!gsap || !ScrollTrigger) return;
 
-  if (!gsap || !ScrollTrigger) {
-    return;
-  }
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  const root = document.documentElement;
-  const motionMedia = gsap.matchMedia();
   const animatedElements = new Set();
-  const clearProperties = "opacity,transform,clipPath,willChange";
+  const revealedElements = new WeakSet();
+  const clearProperties = "opacity,transform,transformOrigin,willChange";
+  const motionMedia = gsap.matchMedia();
+  let heroStarted = false;
+  let refreshFrame = 0;
 
-  root.classList.remove("reveal-enhanced");
-  root.classList.add("motion-managed");
-
-  ScrollTrigger.config({
-    limitCallbacks: true,
-    ignoreMobileResize: true,
-  });
-
-  /** Converte qualquer seletor ou coleção em uma lista de elementos. */
   const toElements = (targets) => gsap.utils.toArray(targets).filter(Boolean);
 
-  /** Marca os elementos controlados para impressão e movimento reduzido. */
+  /* Marca os elementos para as regras de impressão e acessibilidade do CSS. */
   const markElements = (targets) => {
     const elements = toElements(targets);
-
     elements.forEach((element) => {
       element.classList.add("motion-item");
       animatedElements.add(element);
     });
-
     return elements;
   };
 
-  /** Remove estilos inline ao terminar para não interferir nos hovers do CSS. */
+  /* Devolve o controle ao CSS, inclusive os hovers, depois de cada entrada. */
   const clearMotionStyles = (targets) => {
     const elements = toElements(targets);
-
-    if (elements.length) {
-      gsap.set(elements, { clearProps: clearProperties });
-    }
+    if (!elements.length) return;
+    gsap.set(elements, { clearProps: clearProperties });
+    elements.forEach((element) => element.classList.remove("is-animating"));
   };
 
-  /** Não esconde elementos que já ficaram acima da área visível. */
   const isStillAhead = (element) => element.getBoundingClientRect().bottom > 0;
 
-  motionMedia.add(
-    {
+  try {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ limitCallbacks: true, ignoreMobileResize: true });
+
+    motionMedia.add({
       isMobile: "(max-width: 800px)",
-      isDesktop: "(min-width: 801px)",
       canParallax: "(min-width: 801px) and (hover: hover) and (pointer: fine)",
       reduceMotion: "(prefers-reduced-motion: reduce)",
       isPrinting: "print",
-    },
-    (context) => {
-      const {
-        isMobile,
-        canParallax,
-        reduceMotion,
-        isPrinting,
-      } = context.conditions;
-
+    }, (context) => {
+      const { isMobile, canParallax, reduceMotion, isPrinting } = context.conditions;
       if (reduceMotion || isPrinting) {
         clearMotionStyles(Array.from(animatedElements));
-        return undefined;
+        return;
       }
 
-      const distance = isMobile ? 18 : 38;
-      const duration = isMobile ? 0.58 : 0.78;
-      const stagger = isMobile ? 0.07 : 0.12;
-      const triggerStart = isMobile ? "top 93%" : "top 88%";
-      const ease = "power2.out";
+      let active = true;
+      const distance = isMobile ? 12 : 26;
+      const duration = isMobile ? 0.46 : 0.68;
+      const triggerStart = isMobile ? "top 94%" : "top 91%";
 
-      /** Cria uma entrada única e curta para um elemento ou pequeno grupo. */
-      const animateOnce = (targets, options = {}) => {
-        const elements = markElements(targets);
-        const trigger = options.trigger || elements[0];
-
-        if (!elements.length || !trigger) {
-          return;
-        }
-
-        if (!isStillAhead(trigger)) {
-          clearMotionStyles(elements);
-          return;
-        }
-
-        const fromVars = {
-          opacity: 0,
-          x: options.x ?? 0,
-          y: options.y ?? distance,
-          scale: options.scale ?? 1,
-        };
-        const toVars = {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          scale: 1,
-          duration: options.duration ?? duration,
-          stagger: options.stagger ?? 0,
-          ease: options.ease || ease,
-          overwrite: "auto",
-          clearProps: clearProperties,
-          scrollTrigger: {
-            trigger,
-            start: options.start || triggerStart,
-            once: true,
-          },
-        };
-
-        if (options.clipPath) {
-          fromVars.clipPath = options.clipPath;
-          toVars.clipPath = "inset(0% 0% 0% 0%)";
-        }
-
-        gsap.set(elements, { willChange: "transform, opacity" });
-        gsap.fromTo(elements, fromVars, toVars);
-      };
-
-      /** Anima cards em pequenos lotes, sem iniciar dezenas de tweens juntos. */
-      const animateBatch = (selector, options = {}) => {
-        const elements = markElements(selector).filter(isStillAhead);
-
-        if (!elements.length) {
-          return;
-        }
-
-        gsap.set(elements, {
-          opacity: 0,
-          y: options.y ?? distance,
-          scale: isMobile ? 0.99 : 0.975,
-          willChange: "transform, opacity",
-        });
-
-        ScrollTrigger.batch(elements, {
-          start: options.start || triggerStart,
-          once: true,
-          batchMax: isMobile ? 1 : (options.batchMax || 3),
-          onEnter: (batch) => {
-            gsap.to(batch, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: options.duration ?? duration,
-              stagger: options.stagger ?? stagger,
-              ease: options.ease || ease,
-              overwrite: "auto",
-              clearProps: "opacity,transform,willChange",
-            });
-          },
-        });
-      };
-
-      /**
-       * Faz as fotos da equipe entrarem como figurinhas sendo coladas.
-       * O movimento acontece no <figure>, preservando o enquadramento e o
-       * efeito de zoom que o CSS aplica diretamente à imagem no hover.
+      /*
+       * Os callbacks de scroll também pertencem ao matchMedia. Assim, mudar
+       * para movimento reduzido ou trocar de breakpoint interrompe os tweens.
+       * will-change existe apenas durante a entrada, nunca na página inteira.
        */
-      const animateParticipantStickers = () => {
-        const photos = markElements(".participant-photo").filter(isStillAhead);
+      context.add("reveal", (targets, options = {}) => {
+        if (!active) return;
+        const elements = markElements(targets).filter((element) => (
+          !revealedElements.has(element) && isStillAhead(element)
+        ));
+        if (!elements.length) return;
 
-        if (!photos.length) {
-          return;
-        }
+        elements.forEach((element) => {
+          revealedElements.add(element);
+          element.classList.add("is-animating");
+        });
 
-        const rotations = isMobile
-          ? [-1.1, 1, -0.8, 1]
-          : [-5.5, 4.5, -4, 5];
-
-        gsap.set(photos, {
+        gsap.fromTo(elements, {
           opacity: 0,
-          y: isMobile ? 12 : 24,
-          scale: isMobile ? 0.94 : 0.84,
-          rotation: (index) => rotations[index % rotations.length],
+          y: options.y ?? distance,
+          x: options.x ?? 0,
+          scale: options.scale ?? 1,
+          rotation: options.rotation ?? 0,
           transformOrigin: "50% 60%",
           willChange: "transform, opacity",
-        });
-
-        ScrollTrigger.batch(photos, {
-          start: isMobile ? "top 94%" : triggerStart,
-          once: true,
-          batchMax: isMobile ? 1 : 3,
-          onEnter: (batch) => {
-            gsap.to(batch, {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              rotation: 0,
-              duration: isMobile ? 0.58 : 0.82,
-              stagger: isMobile ? 0 : 0.1,
-              ease: isMobile ? "power2.out" : "back.out(1.45)",
-              overwrite: "auto",
-              clearProps: "opacity,transform,transformOrigin,willChange",
-            });
-          },
-        });
-      };
-
-      /* Entrada cinematográfica e contida da capa. */
-      const heroEyebrow = document.querySelector(".hero-copy .eyebrow");
-      const heroTitle = document.querySelector(".hero-copy h1");
-      const heroText = document.querySelector(".hero-text");
-      const heroActions = document.querySelector(".hero-actions");
-      const heroArt = document.querySelector(".hero-art");
-      const heroParts = markElements([
-        heroEyebrow,
-        heroTitle,
-        heroText,
-        heroActions,
-        heroArt,
-      ]);
-      const initialHash = window.location.hash;
-      const shouldSkipHero = (
-        Boolean(initialHash)
-        && initialHash !== "#inicio"
-      ) || window.scrollY > 80;
-
-      if (shouldSkipHero) {
-        clearMotionStyles(heroParts);
-      } else if (heroParts.length) {
-        const copyParts = [heroEyebrow, heroTitle, heroText, heroActions].filter(Boolean);
-        const heroTimeline = gsap.timeline({ defaults: { ease } });
-
-        gsap.set(copyParts, {
-          opacity: 0,
-          y: isMobile ? 20 : 46,
-          willChange: "transform, opacity",
-        });
-
-        if (heroTitle) {
-          gsap.set(heroTitle, {
-            clipPath: "inset(0% 0% 100% 0%)",
-            willChange: "transform, opacity, clip-path",
-          });
-        }
-
-        if (heroArt) {
-          gsap.set(heroArt, {
-            opacity: 0,
-            x: isMobile ? 0 : 56,
-            y: isMobile ? 24 : 0,
-            scale: isMobile ? 0.975 : 0.95,
-            willChange: "transform, opacity",
-          });
-        }
-
-        if (heroEyebrow) {
-          heroTimeline.to(heroEyebrow, {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            clearProps: clearProperties,
-          });
-        }
-
-        if (heroTitle) {
-          heroTimeline.to(heroTitle, {
-            opacity: 1,
-            y: 0,
-            clipPath: "inset(0% 0% 0% 0%)",
-            duration: isMobile ? 0.76 : 1,
-            clearProps: clearProperties,
-          }, "-=0.18");
-        }
-
-        if (heroText) {
-          heroTimeline.to(heroText, {
-            opacity: 1,
-            y: 0,
-            duration: 0.62,
-            clearProps: clearProperties,
-          }, "-=0.3");
-        }
-
-        if (heroArt) {
-          heroTimeline.to(heroArt, {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            duration: isMobile ? 0.78 : 1.06,
-            clearProps: clearProperties,
-          }, 0.18);
-        }
-
-        if (heroActions) {
-          heroTimeline.to(heroActions, {
-            opacity: 1,
-            y: 0,
-            duration: 0.54,
-            clearProps: clearProperties,
-          }, ">-0.06");
-        }
-      }
-
-      /* Cabeçalhos numerados entram em duas etapas para reforçar a hierarquia. */
-      document.querySelectorAll(".section-heading").forEach((heading) => {
-        const parts = markElements(Array.from(heading.children));
-
-        if (!parts.length || !isStillAhead(heading)) {
-          clearMotionStyles(parts);
-          return;
-        }
-
-        gsap.set(parts, {
-          opacity: 0,
-          x: isMobile ? 0 : -12,
-          y: distance,
-          willChange: "transform, opacity",
-        });
-
-        gsap.to(parts, {
+        }, {
           opacity: 1,
-          x: 0,
           y: 0,
-          duration,
-          stagger: isMobile ? 0.05 : 0.08,
-          ease,
+          x: 0,
+          scale: 1,
+          rotation: 0,
+          duration: options.duration ?? duration,
+          delay: options.delay ?? 0,
+          stagger: options.stagger ?? (isMobile ? 0.04 : 0.09),
+          ease: options.ease || "power3.out",
+          overwrite: "auto",
           clearProps: clearProperties,
-          scrollTrigger: {
-            trigger: heading,
-            start: triggerStart,
-            once: true,
-          },
+          onComplete: () => clearMotionStyles(elements),
         });
       });
 
-      /* Blocos editoriais que pedem somente uma entrada simples. */
+      /* Observa o contêiner estável e anima somente quando ele entra na tela. */
+      const animateOnce = (targets, options = {}) => {
+        const elements = markElements(targets);
+        const trigger = options.trigger || elements[0];
+        if (!trigger || !isStillAhead(trigger)) return;
+        if (elements.every((element) => revealedElements.has(element))) return;
+
+        ScrollTrigger.create({
+          trigger,
+          start: triggerStart,
+          once: true,
+          onEnter: () => context.reveal(elements, options),
+        });
+      };
+
+      /* Sequências curtas: até três cards no desktop e apenas um no celular. */
+      const animateBatch = (selector, options = {}) => {
+        const elements = markElements(selector).filter((element) => (
+          !revealedElements.has(element) && isStillAhead(element)
+        ));
+        if (!elements.length) return;
+
+        ScrollTrigger.batch(elements, {
+          start: triggerStart,
+          once: true,
+          interval: 0.06,
+          batchMax: isMobile ? 1 : (options.batchMax || 3),
+          onEnter: (batch) => context.reveal(batch, options),
+        });
+      };
+
+      /*
+       * Capa com entradas sobrepostas. Os botões ficam prontos mais cedo.
+       * Não reapresenta a capa ao redimensionar ou depois de uma CDN muito lenta.
+       */
+      const heroParts = markElements([
+        document.querySelector(".hero-copy .eyebrow"),
+        document.querySelector(".hero-copy h1"),
+        document.querySelector(".hero-text"),
+        document.querySelector(".hero-actions"),
+      ]);
+      const heroArt = document.querySelector(".hero-art");
+      const initialHash = window.location.hash;
+      const skipHero = heroStarted || window.scrollY > 80
+        || (Boolean(initialHash) && initialHash !== "#inicio")
+        || performance.now() > 1800;
+      heroStarted = true;
+
+      if (!skipHero) {
+        heroParts.forEach((part, index) => context.reveal(part, {
+          y: isMobile ? 14 : 30,
+          delay: index * (isMobile ? 0.1 : 0.13),
+          duration: isMobile ? 0.52 : 0.78,
+          stagger: 0,
+        }));
+        if (heroArt) context.reveal(heroArt, {
+          y: isMobile ? 14 : 20,
+          duration: 0.85,
+          delay: 0.12,
+        });
+      }
+
+      /* A numeração precede o título sem recortar palavras durante a leitura. */
+      document.querySelectorAll(".section-heading").forEach((heading) => {
+        animateOnce(Array.from(heading.children), { trigger: heading });
+      });
+
       [
-        ".fusion-bar",
-        ".project-intro",
-        ".project-journey-intro",
-        ".project-journey-note",
-        ".research-intro",
-        ".fecci-article-intro",
-        ".fecci-article-summary",
-        ".course-pilot-note",
-        ".material-copy",
-        ".material-panel-copy",
-        ".results-overview",
-        ".result-note",
-        ".journal-card",
-        ".journal-timeline-heading",
-        ".team-intro",
+        ".fusion-bar", ".project-intro", ".project-journey-intro",
+        ".project-journey-note", ".research-intro", ".fecci-article-intro",
+        ".fecci-article-summary", ".course-pilot-note", ".material-copy",
+        ".material-panel-copy", ".results-overview", ".result-note",
+        ".journal-card", ".journal-timeline-heading", ".team-intro",
       ].forEach((selector) => {
         document.querySelectorAll(selector).forEach((element) => animateOnce(element));
       });
 
-      /* Cards e etapas entram em sequência apenas dentro do próprio grupo. */
       [
-        [".project-path .project-card, .project-path .project-goal", 3],
-        [".project-journey-list > li", 4],
-        [".article-card", 3],
-        [".course-module", 3],
-        [".course-fact", 4],
-        [".results-evidence-item", 3],
-        [".result-card", 3],
-        [".journal-timeline > li", 3],
-        [".reference-row", 3],
-      ].forEach(([selector, batchMax]) => animateBatch(selector, { batchMax }));
+        ".project-path .project-card, .project-path .project-goal",
+        ".project-journey-list > li", ".article-card", ".course-module",
+        ".course-fact", ".results-evidence-item", ".result-card",
+        ".journal-timeline > li", ".reference-row",
+      ].forEach((selector) => animateBatch(selector));
 
-      /* As fotos da equipe recebem uma entrada própria em formato de figurinha. */
-      animateParticipantStickers();
+      /* Figurinhas da equipe: leve rotação e uma acomodação curta ao colar. */
+      const stickerAngles = new Map(
+        Array.from(document.querySelectorAll(".participant-photo")).map((photo, index) => (
+          [photo, [-5, 4, -3.5, 4.5][index % 4]]
+        ))
+      );
+      animateBatch(".participant-photo", {
+        scale: isMobile ? 0.96 : 0.88,
+        y: isMobile ? 10 : 20,
+        rotation: (_, element) => stickerAngles.get(element) * (isMobile ? 0.2 : 1),
+        duration: isMobile ? 0.5 : 0.76,
+        ease: isMobile ? "power3.out" : "back.out(1.15)",
+      });
 
-      /* Revelação visual reservada às imagens editoriais mais importantes. */
-      const documentPreviews = [
-        ".fecci-document-preview",
-        ".material-preview",
-      ];
+      /*
+       * Prévias entram com um pequeno zoom. As fotos dos resultados acompanham
+       * seus cards: evita duas animações sobrepostas na mesma área.
+       */
+      [".fecci-document-preview", ".material-preview"].forEach((selector) => {
+        document.querySelectorAll(selector).forEach((element) => animateOnce(element, {
+          scale: isMobile ? 1 : 0.985,
+          y: isMobile ? 10 : 20,
+        }));
+      });
 
-      if (isMobile) {
-        documentPreviews.forEach((selector) => {
-          document.querySelectorAll(selector).forEach((element) => {
-            animateOnce(element, { y: 10, duration: 0.48 });
-          });
-        });
-      } else {
-        [...documentPreviews, ".result-photo"].forEach((selector) => {
-          document.querySelectorAll(selector).forEach((container) => {
-            const image = container.querySelector("img");
-            const elements = markElements(image ? [container, image] : [container]);
-
-            if (!isStillAhead(container)) {
-              clearMotionStyles(elements);
-              return;
-            }
-
-            gsap.set(container, {
-              opacity: 0,
-              clipPath: "inset(0% 0% 100% 0%)",
-              willChange: "opacity, clip-path",
-            });
-
-            if (image) {
-              gsap.set(image, {
-                scale: 1.055,
-                willChange: "transform",
-              });
-            }
-
-            const imageTimeline = gsap.timeline({
-              scrollTrigger: {
-                trigger: container,
-                start: triggerStart,
-                once: true,
-              },
-            });
-
-            imageTimeline.to(container, {
-              opacity: 1,
-              clipPath: "inset(0% 0% 0% 0%)",
-              duration: 0.92,
-              ease,
-              clearProps: "opacity,clipPath,willChange",
-            });
-
-            if (image) {
-              imageTimeline.to(image, {
-                scale: 1,
-                duration: 1.08,
-                ease,
-                clearProps: "transform,willChange",
-              }, 0);
-            }
-          });
-        });
-      }
-
-      /* Parallax discreto somente em elementos decorativos e ponteiro preciso. */
-      if (canParallax) {
-        gsap.to(".orbit-one", {
-          "--orbit-shift-x": "12px",
-          "--orbit-shift-y": "-30px",
-          ease: "none",
+      /* Um único controle de parallax, usando transform, só para desktop. */
+      if (canParallax && document.querySelector(".hero")) {
+        gsap.timeline({
           scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.8,
+            trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.6,
           },
-        });
-
-        gsap.to(".orbit-two", {
-          "--orbit-shift-x": "-10px",
-          "--orbit-shift-y": "24px",
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.9,
-          },
-        });
+        })
+          .to(".orbit-one", { x: 10, y: -22, ease: "none", duration: 1 }, 0)
+          .to(".orbit-two", { x: -8, y: 18, ease: "none", duration: 1 }, 0);
       }
 
       return () => {
+        active = false;
         clearMotionStyles(Array.from(animatedElements));
       };
-    },
-  );
+    });
+  } catch (error) {
+    /* Qualquer falha de inicialização devolve imediatamente o conteúdo à tela. */
+    motionMedia.revert();
+    clearMotionStyles(Array.from(animatedElements));
+    console.warn("Animações indisponíveis; conteúdo preservado.", error);
+    return;
+  }
 
-  /* Mantém controles focáveis utilizáveis mesmo antes da animação de entrada. */
+  /* Foco por teclado revela também os ancestrais que ainda estão animando. */
   document.addEventListener("focusin", (event) => {
-    const owner = event.target.closest?.(".motion-item");
-
-    if (!owner || Number(gsap.getProperty(owner, "opacity")) >= 0.99) {
-      return;
+    let element = event.target instanceof Element ? event.target : null;
+    while (element) {
+      if (animatedElements.has(element)) {
+        revealedElements.add(element);
+        gsap.killTweensOf(element);
+        clearMotionStyles(element);
+      }
+      element = element.parentElement;
     }
-
-    gsap.killTweensOf(owner);
-    gsap.set(owner, { opacity: 1, x: 0, y: 0, scale: 1, clipPath: "none" });
-    clearMotionStyles(owner);
   });
 
-  /* Recalcula posições uma única vez após imagens, fontes e o modelo carregarem. */
+  /* Agrupa atualizações de layout; não recalcula posições a cada frame. */
   const refreshTriggers = () => {
-    window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    if (refreshFrame) return;
+    refreshFrame = window.requestAnimationFrame(() => {
+      refreshFrame = 0;
+      ScrollTrigger.refresh();
+    });
   };
-
-  if (document.readyState === "complete") {
-    refreshTriggers();
-  } else {
-    window.addEventListener("load", refreshTriggers, { once: true });
-  }
+  if (document.readyState === "complete") refreshTriggers();
+  else window.addEventListener("load", refreshTriggers, { once: true });
+  window.addEventListener("pageshow", refreshTriggers);
 })();
-

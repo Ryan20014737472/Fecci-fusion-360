@@ -252,6 +252,12 @@ Não aumente indiscriminadamente a largura da imagem. O contêiner também preci
 
 ### Qualidade das imagens
 
+As quatro fotos maiores têm cópias em `assets/optimized/`, convertidas para WebP
+sem mudar dimensões ou enquadramento. Os originais continuam em `assets/` e
+`assets/participantes/`. Nas fotos de resultados, `data-full-src` indica o original
+aberto pela ampliação; `src` indica a versão leve exibida na página. Ao trocar
+uma dessas fotos, atualize os dois caminhos e informe as dimensões reais.
+
 O navegador não consegue recuperar detalhes que não existem no arquivo original. Para manter nitidez:
 
 - use a imagem original, evitando capturas muito comprimidas;
@@ -543,11 +549,11 @@ Todas as animações visuais estão concentradas em `assets/js/animations.js`. O
 
 ### O que é animado
 
-- a capa entra na ordem: categoria, título, texto, modelo 3D e botões;
+- a capa tem entradas curtas e sobrepostas para categoria, título, texto, modelo 3D e botões;
 - números e títulos das seções surgem em uma sequência curta;
 - cards de pesquisa, minicurso, resultados, diário e referências entram em pequenos lotes;
 - as fotos da equipe aparecem em sequência com um efeito curto de figurinha sendo colada;
-- prévias de documentos e fotos importantes recebem uma revelação discreta;
+- prévias de documentos recebem fade e um pequeno zoom; fotos de resultados entram junto com seus cards, sem animação duplicada;
 - as órbitas decorativas da capa possuem parallax leve apenas no desktop com mouse;
 - `clearProps` remove os estilos inline ao final, preservando os efeitos de hover definidos no CSS.
 
@@ -555,7 +561,11 @@ Todas as animações visuais estão concentradas em `assets/js/animations.js`. O
 
 Em telas de até 800 px, os deslocamentos e durações são menores, os cards entram individualmente e o parallax é desativado. A preferência `prefers-reduced-motion: reduce` remove as entradas, o parallax e as transições não essenciais. A impressão também força todos os elementos a permanecerem visíveis.
 
-As animações usam apenas `opacity`, `transform` e, em poucas imagens, `clip-path`. Não há rolagem artificial, seções fixadas ou dezenas de animações iniciadas simultaneamente.
+As animações usam apenas `opacity` e `transform`. O conteúdo fora da tela permanece visível até o momento da entrada, e `will-change` só fica ativo enquanto o elemento está animando. Não há rolagem artificial nem seções fixadas.
+
+Os callbacks de rolagem pertencem ao contexto de `gsap.matchMedia()`: uma mudança para movimento reduzido interrompe também as animações em andamento. Entradas já vistas não se repetem quando a tela muda de tamanho. A classe temporária `is-animating` impede que transições CSS disputem o movimento com GSAP e é removida ao terminar.
+
+O menu e o lightbox iniciam antes das bibliotecas externas. Se a CDN demorar, continuam utilizáveis; a capa já lida não é escondida quando as animações finalmente chegam.
 
 ### Como animar um componente novo
 
@@ -563,7 +573,7 @@ Se o novo componente reutilizar uma classe existente, como `.article-card` ou `.
 
 1. abra `assets/js/animations.js`;
 2. para um bloco único, acrescente o seletor à lista de blocos editoriais;
-3. para vários cards, acrescente `[".nova-classe", 3]` à lista usada por `animateBatch`;
+3. para vários cards, acrescente `".nova-classe"` à lista usada por `animateBatch`;
 4. preserve o conteúdo visível no CSS e deixe o JavaScript controlar apenas o estado temporário;
 5. teste com redução de movimento ativada e em uma tela de até 800 px.
 
@@ -669,25 +679,32 @@ Antes de substituir o STL, exporte as letras e o corpo como sólidos separados o
 
 Não use um `pixelRatio` muito alto, pois pode deixar o site lento em celulares.
 
+### Falha ou demora de conexão
+
+O visualizador tem um prazo de 30 segundos para carregar as dependências e o STL.
+Se a rede ficar pendurada, ele mostra uma orientação para recarregar a página,
+sem bloquear a leitura ou o menu. Respostas que chegam depois desse prazo são
+descartadas. O prazo está em `loadingDeadline`, no início de `model-viewer.js`.
+
 ## 19. Cache e números de versão
 
 O HTML carrega os arquivos com sufixos como:
 
 ```html
-<link rel="stylesheet" href="style.css?v=33">
-<script type="module" src="model-viewer.js?v=10"></script>
-<script src="script.js?v=6"></script>
-<script src="assets/js/animations.js?v=4"></script>
+<link rel="stylesheet" href="style.css?v=34">
+<script src="script.js?v=7" defer></script>
+<script type="module" src="model-viewer.js?v=11"></script>
+<script src="assets/js/animations.js?v=5"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
 
 Após mudar um desses arquivos, aumente seu número:
 
-- `style.css?v=33` → `style.css?v=34`;
-- `model-viewer.js?v=10` → `model-viewer.js?v=11`;
-- `script.js?v=6` → `script.js?v=7`;
-- `animations.js?v=4` → `animations.js?v=5`.
+- `style.css?v=34` → `style.css?v=35`;
+- `model-viewer.js?v=11` → `model-viewer.js?v=12`;
+- `script.js?v=7` → `script.js?v=8`;
+- `animations.js?v=5` → `animations.js?v=6`.
 
 O número não altera o nome real do arquivo.
 
@@ -885,4 +902,3 @@ Antes de mudar qualquer trecho, descubra a relação entre os arquivos:
 - se substituir o STL, confirme escala, orientação, componentes e materiais.
 
 Seguindo essas relações, o site pode evoluir sem perder o estilo, a responsividade ou as funções que já estão prontas.
-

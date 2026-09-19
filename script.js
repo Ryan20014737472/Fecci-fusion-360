@@ -263,7 +263,8 @@
 
         lastFocusedTrigger = trigger;
         trigger.setAttribute('aria-expanded', 'true');
-        lightboxImage.src = image.currentSrc || image.src;
+        // A página usa uma cópia leve; a ampliação mantém o arquivo original.
+        lightboxImage.src = image.dataset.fullSrc || image.currentSrc || image.src;
         lightboxImage.alt = image.alt;
         lightboxCaption.textContent = caption;
         lightbox.hidden = false;

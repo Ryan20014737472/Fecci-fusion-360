@@ -28,7 +28,7 @@
   <meta name="twitter:image:alt" content="Logo do Clube Maker do projeto FECCI Fusion 360">
   <title>Projeto FECCI | Competências STEAM com Fusion 360</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="style.css?v=33">
+  <link rel="stylesheet" href="style.css?v=34">
 </head>
 <body>
   <!-- Atalho de teclado para alcançar diretamente o conteúdo principal -->
@@ -458,7 +458,7 @@
         <article class="result-card result-card-accent result-card-featured reveal" role="listitem">
           <figure class="result-photo result-photo-mentoria">
             <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar imagem da mentoria do projeto">
-              <img src="assets/mentoriamaker.png" alt="Mentoria on-line sobre o planejamento e desenvolvimento do projeto" width="1855" height="848" loading="lazy" decoding="async">
+              <img src="assets/optimized/mentoria-maker.webp" data-full-src="assets/mentoriamaker.png" alt="Mentoria on-line sobre o planejamento e desenvolvimento do projeto" width="1855" height="848" loading="lazy" decoding="async">
             </button>
             <figcaption>Mentoria e inspiração para o projeto.</figcaption>
           </figure>
@@ -473,7 +473,7 @@
         <article class="result-card result-card-featured result-card-light reveal" role="listitem">
           <figure class="result-photo">
             <button class="result-photo-trigger" type="button" data-lightbox-trigger aria-label="Ampliar imagem da conversa com a coordenação de matemática">
-              <img src="assets/coordena%C3%A7%C3%A3o%20de%20matem%C3%A1tica.jpg" alt="Conversa da equipe com a coordenação de matemática" width="1600" height="900" loading="lazy" decoding="async" fetchpriority="low">
+              <img src="assets/optimized/coordenacao-matematica.webp" data-full-src="assets/coordena%C3%A7%C3%A3o%20de%20matem%C3%A1tica.jpg" alt="Conversa da equipe com a coordenação de matemática" width="4096" height="1904" loading="lazy" decoding="async">
             </button>
             <figcaption>Conversa com a coordenação de matemática.</figcaption>
           </figure>
@@ -634,7 +634,7 @@
           <!-- Técnico centralizado no topo da organização da equipe -->
           <article role="listitem" class="participant-card participant-card-lead" data-participant-number="TÉC">
             <figure class="participant-photo">
-              <img src="assets/participantes/Helton%20(1).jpg" alt="Foto do técnico Helton Limberger" width="2448" height="3264" loading="lazy" decoding="async">
+              <img src="assets/optimized/helton.webp" alt="Foto do técnico Helton Limberger" width="2448" height="3264" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>TÉCNICO</span>
@@ -673,7 +673,7 @@
           <!-- Participante posicionado à direita na base da organização -->
           <article role="listitem" class="participant-card participant-card-right" data-participant-number="03">
             <figure class="participant-photo">
-              <img src="assets/participantes/Arthur.jpg" alt="Foto do participante Arthur Dutra" width="1394" height="2305" loading="lazy" decoding="async">
+              <img src="assets/optimized/arthur.webp" alt="Foto do participante Arthur Dutra" width="1394" height="2305" loading="lazy" decoding="async">
             </figure>
             <div class="participant-info">
               <span>PARTICIPANTE 03</span>
@@ -720,15 +720,14 @@
       }
     }
   </script>
+  <!-- A navegação funciona antes do visualizador e das bibliotecas de animação. -->
+  <script src="script.js?v=7" defer></script>
   <!-- Controla o carregamento e a interação com o modelo STL -->
-  <script type="module" src="model-viewer.js?v=10"></script>
+  <script type="module" src="model-viewer.js?v=11"></script>
   <!-- Bibliotecas leves utilizadas exclusivamente nas animações progressivas -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
-  <!-- Controla menu, navegação ativa, ano do rodapé e lightbox -->
-  <script src="script.js?v=6" defer></script>
   <!-- Centraliza as animações da interface sem misturá-las ao restante da lógica -->
-  <script src="assets/js/animations.js?v=4" defer></script>
+  <script src="assets/js/animations.js?v=5" defer></script>
 </body>
 </html>
-
