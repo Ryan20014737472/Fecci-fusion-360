@@ -1546,6 +1546,20 @@ h2 {
   padding: 0;
 }
 
+/* Quarto momento sem foto: mantém o cartão claro e abre espaço para o texto. */
+.result-card-text-only {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.result-card-text-only .result-featured-copy {
+  min-height: 260px;
+}
+
+.result-placeholder {
+  color: #777 !important;
+  font-style: italic;
+}
+
 .result-photo {
   position: relative;
   align-self: center;
@@ -3238,3 +3252,4 @@ body.lightbox-open {
     transform: translateX(-50%);
   }
 }
+
