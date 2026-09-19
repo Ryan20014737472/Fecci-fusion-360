@@ -45,8 +45,10 @@ if (viewer) {
   if (!(canvas instanceof HTMLCanvasElement) || !loadingMessage) {
     showError(new Error('Estrutura do visualizador 3D incompleta.'));
   } else {
-    // Importações dinâmicas permitem informar o erro caso a CDN não responda
-    Promise.all([
+    // Importações dinâmicas permitem informar o erro caso a CDN não responda.
+    // A inicialização começa depois da primeira pintura para não disputar
+    // recursos com o conteúdo principal da página.
+    const loadViewerDependencies = () => Promise.all([
       import('three'),
       import('three/addons/controls/OrbitControls.js'),
       import('three/addons/loaders/STLLoader.js')
@@ -862,5 +864,12 @@ if (viewer) {
         initializeViewer();
       })
       .catch(showError);
+
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(loadViewerDependencies, { timeout: 500 });
+    } else {
+      window.setTimeout(loadViewerDependencies, 0);
+    }
   }
 }
+
