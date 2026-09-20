@@ -254,9 +254,9 @@ Não aumente indiscriminadamente a largura da imagem. O contêiner também preci
 
 As quatro fotos maiores têm cópias em `assets/optimized/`, convertidas para WebP
 sem mudar dimensões ou enquadramento. Os originais continuam em `assets/` e
-`assets/participantes/`. Nas fotos de resultados, `data-full-src` indica o original
-aberto pela ampliação; `src` indica a versão leve exibida na página. Ao trocar
-uma dessas fotos, atualize os dois caminhos e informe as dimensões reais.
+`assets/participantes/`. A ampliação reutiliza `currentSrc` da foto já carregada,
+inclusive a versão WebP em resolução completa, evitando baixar o original pesado
+ao clicar. Ao trocar uma foto, atualize `src` e informe as dimensões reais.
 
 O navegador não consegue recuperar detalhes que não existem no arquivo original. Para manter nitidez:
 
@@ -720,7 +720,7 @@ O HTML carrega os arquivos com sufixos como:
 
 ```html
 <link rel="stylesheet" href="style.css?v=35">
-<script src="script.js?v=7" defer></script>
+<script src="script.js?v=8" defer></script>
 <script type="module" src="model-viewer.js?v=12"></script>
 <script src="assets/js/animations.js?v=6"></script>
 ```
@@ -731,7 +731,7 @@ Após mudar um desses arquivos, aumente seu número:
 
 - `style.css?v=35` → `style.css?v=36`;
 - `model-viewer.js?v=12` → `model-viewer.js?v=13`;
-- `script.js?v=7` → `script.js?v=8`;
+- `script.js?v=8` → `script.js?v=9`;
 - `animations.js?v=6` → `animations.js?v=7`.
 
 O número não altera o nome real do arquivo.

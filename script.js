@@ -251,7 +251,7 @@
         }
       };
 
-      // Abre a imagem original e mantém sua descrição acessível
+      // Amplia a imagem já carregada, sem baixar outra cópia mais pesada.
       const openLightbox = (trigger) => {
         if (!lightbox.hidden) return;
 
@@ -263,8 +263,7 @@
 
         lastFocusedTrigger = trigger;
         trigger.setAttribute('aria-expanded', 'true');
-        // A página usa uma cópia leve; a ampliação mantém o arquivo original.
-        lightboxImage.src = image.dataset.fullSrc || image.currentSrc || image.src;
+        lightboxImage.src = image.currentSrc || image.src;
         lightboxImage.alt = image.alt;
         lightboxCaption.textContent = caption;
         lightbox.hidden = false;
