@@ -545,39 +545,36 @@ Para que uma nova imagem de resultado receba essa função automaticamente, use 
 
 ## 17. Como funciona o `animations.js`
 
-Todas as animações visuais estão concentradas em `assets/js/animations.js`. O arquivo verifica primeiro se GSAP e ScrollTrigger carregaram. Somente depois dessa verificação ele aplica estilos temporários; assim, uma falha de rede nunca deixa textos ou cards invisíveis.
+Todas as animações ficam em `assets/js/animations.js`, usando GSAP e ScrollTrigger.
 
-### O que é animado
+### Correção de estabilidade visual
 
-- a capa tem entradas curtas e sobrepostas para categoria, título, texto, modelo 3D e botões;
-- números e títulos das seções surgem em uma sequência curta;
-- cards de pesquisa, minicurso, resultados, diário e referências entram em pequenos lotes;
-- as fotos da equipe aparecem em sequência com um efeito curto de figurinha sendo colada;
-- prévias de documentos recebem fade e um pequeno zoom; fotos de resultados entram junto com seus cards, sem animação duplicada;
-- as órbitas decorativas da capa possuem parallax leve apenas no desktop com mouse;
-- `clearProps` remove os estilos inline ao final, preservando os efeitos de hover definidos no CSS.
+- Textos e cards recebem somente fade, sem escala, rotação ou deslocamento das letras.
+- A capa permanece visível desde a primeira pintura; uma CDN atrasada não reinicia sua entrada.
+- Somente elementos completamente abaixo da tela são preparados com opacidade zero, antes de registrar os gatilhos. Conteúdo já visível não é escondido.
+- A entrada começa na borda inferior da tela, uma única vez. Saltos de navegação também disparam os callbacks.
+- Fotos da equipe mantêm o efeito de figurinha; prévias mantêm um movimento discreto.
+- Cards do minicurso, referências e integrantes destacam bordas e sombras no hover, sem ampliar seus textos.
+- Não há alteração de palavras, divisão de letras ou mudança do conteúdo científico.
 
 ### Celular, desempenho e acessibilidade
 
-Em telas de até 800 px, os deslocamentos e durações são menores, os cards entram individualmente e o parallax é desativado. A preferência `prefers-reduced-motion: reduce` remove as entradas, o parallax e as transições não essenciais. A impressão também força todos os elementos a permanecerem visíveis.
+Em telas de até 800 px, as entradas são menores e o parallax é desativado.
+A preferência `prefers-reduced-motion: reduce` e a impressão removem os efeitos.
+Foco por teclado revela imediatamente o elemento e seus ancestrais.
+Trocas de breakpoint limpam estilos temporários e não repetem entradas já vistas.
 
-As animações usam apenas `opacity` e `transform`. O conteúdo fora da tela permanece visível até o momento da entrada, e `will-change` só fica ativo enquanto o elemento está animando. Não há rolagem artificial nem seções fixadas.
-
-Os callbacks de rolagem pertencem ao contexto de `gsap.matchMedia()`: uma mudança para movimento reduzido interrompe também as animações em andamento. Entradas já vistas não se repetem quando a tela muda de tamanho. A classe temporária `is-animating` impede que transições CSS disputem o movimento com GSAP e é removida ao terminar.
-
-O menu e o lightbox iniciam antes das bibliotecas externas. Se a CDN demorar, continuam utilizáveis; a capa já lida não é escondida quando as animações finalmente chegam.
+O CSS permanente mantém o conteúdo visível. Se GSAP não carregar, nenhuma entrada
+é preparada. A navegação funciona independentemente das bibliotecas externas.
+Não são criadas camadas com `will-change` em todos os elementos da página.
 
 ### Como animar um componente novo
 
-Se o novo componente reutilizar uma classe existente, como `.article-card` ou `.result-card`, ele será reconhecido automaticamente. Para uma classe inédita:
-
-1. abra `assets/js/animations.js`;
-2. para um bloco único, acrescente o seletor à lista de blocos editoriais;
-3. para vários cards, acrescente `".nova-classe"` à lista usada por `animateBatch`;
-4. preserve o conteúdo visível no CSS e deixe o JavaScript controlar apenas o estado temporário;
-5. teste com redução de movimento ativada e em uma tela de até 800 px.
-
-Não adicione `opacity: 0` diretamente ao CSS permanente. Isso esconderia o conteúdo caso a biblioteca externa falhasse.
+1. Reutilize as classes existentes ou acrescente o seletor às listas de `animateOnce` / `animateBatch`.
+2. Deixe textos no padrão (apenas opacidade).
+3. Use `visual: true` somente em imagens sem texto editorial; nunca em um card inteiro com parágrafos.
+4. Não coloque `opacity: 0` no CSS permanente nem dentro de um callback que esconde conteúdo já visível.
+5. Teste rolagem rápida, links diretos, teclado, redução de movimento e celular.
 
 ## 18. Como funciona o modelo 3D
 
@@ -691,20 +688,20 @@ descartadas. O prazo está em `loadingDeadline`, no início de `model-viewer.js`
 O HTML carrega os arquivos com sufixos como:
 
 ```html
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=35">
 <script src="script.js?v=7" defer></script>
 <script type="module" src="model-viewer.js?v=11"></script>
-<script src="assets/js/animations.js?v=5"></script>
+<script src="assets/js/animations.js?v=6"></script>
 ```
 
 O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão antiga guardada em cache.
 
 Após mudar um desses arquivos, aumente seu número:
 
-- `style.css?v=34` → `style.css?v=35`;
+- `style.css?v=35` → `style.css?v=36`;
 - `model-viewer.js?v=11` → `model-viewer.js?v=12`;
 - `script.js?v=7` → `script.js?v=8`;
-- `animations.js?v=5` → `animations.js?v=6`.
+- `animations.js?v=6` → `animations.js?v=7`.
 
 O número não altera o nome real do arquivo.
 

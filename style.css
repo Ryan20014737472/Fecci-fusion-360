@@ -1131,7 +1131,7 @@ h2 {
 .course-module:hover {
   border-color: rgba(174, 70, 19, 0.48);
   box-shadow: var(--shadow-card);
-  transform: translateY(-4px) scale(1.006);
+  /* Preserva a nitidez dos textos; o destaque fica na borda e na sombra. */
 }
 
 .course-module-number {
@@ -1990,7 +1990,7 @@ h2 {
   border-color: rgba(255, 106, 33, 0.34);
   background: rgba(255, 255, 255, 0.03);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
-  transform: translateY(-2px) scale(1.002);
+  /* Referências permanecem imóveis durante a leitura. */
 }
 
 .reference-row > span {
@@ -2177,7 +2177,7 @@ h2 {
 .participant-card:hover {
   border-color: rgba(174, 70, 19, 0.38);
   box-shadow: var(--shadow-card);
-  transform: translateY(-4px) scale(1.006);
+  /* Só a foto recebe o efeito de figurinha, nunca o texto do integrante. */
 }
 
 .participant-photo {

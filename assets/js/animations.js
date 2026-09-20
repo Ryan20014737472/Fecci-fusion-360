@@ -1,8 +1,8 @@
 /*
  * Animações progressivas FECCI Fusion 360.
  * O conteúdo continua visível se a CDN falhar. As entradas usam somente
- * transform e opacity; nenhum elemento distante fica escondido ou promovido
- * antecipadamente a uma camada de composição.
+ * opacity nos textos e transform apenas nas imagens. Entradas são preparadas
+ * fora da tela: conteúdo que já está visível nunca é escondido para reaparecer.
  */
 (() => {
   const { gsap, ScrollTrigger } = window;
@@ -12,7 +12,6 @@
   const revealedElements = new WeakSet();
   const clearProperties = "opacity,transform,transformOrigin,willChange";
   const motionMedia = gsap.matchMedia();
-  let heroStarted = false;
   let refreshFrame = 0;
 
   const toElements = (targets) => gsap.utils.toArray(targets).filter(Boolean);
@@ -39,7 +38,8 @@
 
   try {
     gsap.registerPlugin(ScrollTrigger);
-    ScrollTrigger.config({ limitCallbacks: true, ignoreMobileResize: true });
+    // Mantém callbacks também quando um salto de navegação atravessa o gatilho.
+    ScrollTrigger.config({ limitCallbacks: false, ignoreMobileResize: true });
 
     motionMedia.add({
       isMobile: "(max-width: 800px)",
@@ -54,19 +54,47 @@
       }
 
       let active = true;
-      const distance = isMobile ? 12 : 26;
+      const preparedElements = new WeakSet();
       const duration = isMobile ? 0.46 : 0.68;
-      const triggerStart = isMobile ? "top 94%" : "top 91%";
+      const triggerStart = "top 100%";
+
+      // Não esconde nada que o visitante já possa estar lendo. A preparação
+      // ocorre antes de registrar o gatilho, nunca dentro de onEnter.
+      const prepare = (targets, options = {}) => {
+        const elements = markElements(targets).filter((element) => {
+          if (revealedElements.has(element)) return false;
+          if (element.getBoundingClientRect().top < window.innerHeight + 40) {
+            revealedElements.add(element);
+            return false;
+          }
+          return true;
+        });
+        elements.forEach((element) => {
+          preparedElements.add(element);
+          element.classList.add("is-animating");
+        });
+        if (elements.length) gsap.set(elements, {
+          opacity: 0,
+          ...(options.visual ? {
+            y: options.y ?? 10,
+            scale: options.scale ?? 1,
+            rotation: options.rotation ?? 0,
+            transformOrigin: "50% 60%",
+            force3D: false,
+          } : {}),
+        });
+        return elements;
+      };
 
       /*
        * Os callbacks de scroll também pertencem ao matchMedia. Assim, mudar
        * para movimento reduzido ou trocar de breakpoint interrompe os tweens.
-       * will-change existe apenas durante a entrada, nunca na página inteira.
+       * Textos recebem apenas opacidade, sem escala, rotação ou translação.
        */
       context.add("reveal", (targets, options = {}) => {
         if (!active) return;
         const elements = markElements(targets).filter((element) => (
-          !revealedElements.has(element) && isStillAhead(element)
+          !revealedElements.has(element) && preparedElements.has(element)
         ));
         if (!elements.length) return;
 
@@ -75,20 +103,9 @@
           element.classList.add("is-animating");
         });
 
-        gsap.fromTo(elements, {
-          opacity: 0,
-          y: options.y ?? distance,
-          x: options.x ?? 0,
-          scale: options.scale ?? 1,
-          rotation: options.rotation ?? 0,
-          transformOrigin: "50% 60%",
-          willChange: "transform, opacity",
-        }, {
+        gsap.to(elements, {
           opacity: 1,
-          y: 0,
-          x: 0,
-          scale: 1,
-          rotation: 0,
+          ...(options.visual ? { y: 0, scale: 1, rotation: 0, force3D: false } : {}),
           duration: options.duration ?? duration,
           delay: options.delay ?? 0,
           stagger: options.stagger ?? (isMobile ? 0.04 : 0.09),
@@ -101,7 +118,7 @@
 
       /* Observa o contêiner estável e anima somente quando ele entra na tela. */
       const animateOnce = (targets, options = {}) => {
-        const elements = markElements(targets);
+        const elements = prepare(targets, options);
         const trigger = options.trigger || elements[0];
         if (!trigger || !isStillAhead(trigger)) return;
         if (elements.every((element) => revealedElements.has(element))) return;
@@ -116,9 +133,7 @@
 
       /* Sequências curtas: até três cards no desktop e apenas um no celular. */
       const animateBatch = (selector, options = {}) => {
-        const elements = markElements(selector).filter((element) => (
-          !revealedElements.has(element) && isStillAhead(element)
-        ));
+        const elements = prepare(selector, options);
         if (!elements.length) return;
 
         ScrollTrigger.batch(elements, {
@@ -130,36 +145,7 @@
         });
       };
 
-      /*
-       * Capa com entradas sobrepostas. Os botões ficam prontos mais cedo.
-       * Não reapresenta a capa ao redimensionar ou depois de uma CDN muito lenta.
-       */
-      const heroParts = markElements([
-        document.querySelector(".hero-copy .eyebrow"),
-        document.querySelector(".hero-copy h1"),
-        document.querySelector(".hero-text"),
-        document.querySelector(".hero-actions"),
-      ]);
-      const heroArt = document.querySelector(".hero-art");
-      const initialHash = window.location.hash;
-      const skipHero = heroStarted || window.scrollY > 80
-        || (Boolean(initialHash) && initialHash !== "#inicio")
-        || performance.now() > 1800;
-      heroStarted = true;
-
-      if (!skipHero) {
-        heroParts.forEach((part, index) => context.reveal(part, {
-          y: isMobile ? 14 : 30,
-          delay: index * (isMobile ? 0.1 : 0.13),
-          duration: isMobile ? 0.52 : 0.78,
-          stagger: 0,
-        }));
-        if (heroArt) context.reveal(heroArt, {
-          y: isMobile ? 14 : 20,
-          duration: 0.85,
-          delay: 0.12,
-        });
-      }
+      // A capa já pode ter sido pintada antes da CDN: permanece estável e legível.
 
       /* A numeração precede o título sem recortar palavras durante a leitura. */
       document.querySelectorAll(".section-heading").forEach((heading) => {
@@ -190,6 +176,7 @@
         ))
       );
       animateBatch(".participant-photo", {
+        visual: true,
         scale: isMobile ? 0.96 : 0.88,
         y: isMobile ? 10 : 20,
         rotation: (_, element) => stickerAngles.get(element) * (isMobile ? 0.2 : 1),
@@ -202,7 +189,8 @@
        * seus cards: evita duas animações sobrepostas na mesma área.
        */
       [".fecci-document-preview", ".material-preview"].forEach((selector) => {
-        document.querySelectorAll(selector).forEach((element) => animateOnce(element, {
+        document.querySelectorAll(`${selector} img`).forEach((element) => animateOnce(element, {
+          visual: true,
           scale: isMobile ? 1 : 0.985,
           y: isMobile ? 10 : 20,
         }));
