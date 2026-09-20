@@ -6,7 +6,9 @@ if (viewer) {
   const loadingMessage = viewer.querySelector('.model-loading');
   const modelHint = viewer.querySelector('.model-hint');
   const modelFallback = viewer.querySelector('.model-fallback');
-  const motionToggle = viewer.querySelector('.model-motion-toggle');
+  const motionToggle = viewer.querySelector('.model-motion-toggle:not([data-scan-skip])');
+  const scanStatus = viewer.querySelector('[data-scan-status]');
+  const scanSkip = viewer.querySelector('[data-scan-skip]');
   let loadingFailed = false;
   let loadingDeadline = null;
 
@@ -29,6 +31,8 @@ if (viewer) {
 
     viewer.classList.remove('is-loaded', 'is-dragging');
     viewer.removeAttribute('tabindex');
+    if (scanStatus) scanStatus.hidden = true;
+    if (scanSkip) scanSkip.hidden = true;
 
     if (motionToggle) {
       motionToggle.hidden = true;
@@ -59,12 +63,24 @@ if (viewer) {
     // Importações dinâmicas permitem informar o erro caso a CDN não responda.
     // A inicialização começa depois da primeira pintura para não disputar
     // recursos com o conteúdo principal da página.
+    // O efeito é opcional: falha ou atraso desse módulo não bloqueia o STL.
+    const loadScanEffect = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData) {
+        return Promise.resolve(null);
+      }
+      let timer;
+      return Promise.race([
+        import('./assets/js/model-scan.js?v=1').catch(() => null),
+        new Promise(resolve => { timer = window.setTimeout(() => resolve(null), 1500); })
+      ]).finally(() => window.clearTimeout(timer));
+    };
     const loadViewerDependencies = () => Promise.all([
       import('three'),
       import('three/addons/controls/OrbitControls.js'),
-      import('three/addons/loaders/STLLoader.js')
+      import('three/addons/loaders/STLLoader.js'),
+      loadScanEffect()
     ])
-      .then(([THREE, controlsModule, loaderModule]) => {
+      .then(([THREE, controlsModule, loaderModule, scanModule]) => {
         // Descarta imports que chegaram depois do prazo, sem reativar o canvas.
         if (loadingFailed) return;
         const { OrbitControls } = controlsModule;
@@ -151,6 +167,8 @@ if (viewer) {
           let viewerVisible = true;
           let viewerFailed = false;
           let rotationPausedByUser = false;
+          let scanEffect = null;
+          let pendingScan = null;
 
           // Cria uma sombra suave abaixo do objeto tridimensional
           const shadow = new THREE.Mesh(
@@ -188,6 +206,8 @@ if (viewer) {
             && viewerVisible
             && !document.hidden
             && !viewerFailed
+            && !scanEffect
+            && !pendingScan
             && !rotationPausedByUser;
 
           const animateAutomaticRotation = (currentTime) => {
@@ -229,6 +249,59 @@ if (viewer) {
             syncAutoRotationLoop();
           };
 
+          // Restaura a peça completa e libera os recursos temporários do scanner.
+          const finishScan = (resume = true) => {
+            if (!scanEffect && !pendingScan) return;
+            if (pendingScan) pendingScan.visible = true;
+            pendingScan = null;
+            scanEffect?.dispose();
+            scanEffect = null;
+            viewer.classList.remove('is-scanning');
+            viewer.dataset.scanState = 'complete';
+            viewer.dataset.scanParticles = '0';
+            if (scanStatus) scanStatus.hidden = true;
+            const returnFocus = scanSkip === document.activeElement;
+            if (scanSkip) scanSkip.hidden = true;
+            if (modelHint) modelHint.hidden = !modelReady || viewerFailed;
+            if (motionToggle) motionToggle.hidden = !modelReady || viewerFailed;
+            if (returnFocus && !viewerFailed) viewer.focus({ preventScroll: true });
+            render(true);
+            if (resume) setAutomaticRotation(true);
+          };
+
+          // No celular a peça pode começar abaixo da dobra: espera ficar visível.
+          const startScanIfVisible = () => {
+            if (!pendingScan || !viewerVisible || document.hidden) return;
+            if (prefersReducedMotion || window.matchMedia('print').matches) { finishScan(); return; }
+            const mesh = pendingScan;
+            mesh.visible = true;
+            try {
+              setAutomaticRotation(false);
+              scanEffect = scanModule.createModelScan({
+                THREE, mesh, scene, renderer, shadow, render,
+                compact: window.matchMedia('(max-width: 800px), (pointer: coarse)').matches,
+                onComplete: () => finishScan()
+              });
+              pendingScan = null;
+              viewer.classList.add('is-scanning');
+              viewer.dataset.scanState = 'running';
+              viewer.dataset.scanParticles = String(scanEffect.particleCount);
+              if (scanStatus) scanStatus.hidden = false;
+              if (scanSkip) scanSkip.hidden = false;
+              if (modelHint) modelHint.hidden = true;
+              if (motionToggle) motionToggle.hidden = true;
+              scanEffect.start();
+            } catch (error) {
+              console.warn('Digitalização indisponível; modelo preservado.', error);
+              finishScan();
+            }
+          };
+          scanSkip?.addEventListener('click', () => finishScan());
+          window.addEventListener('beforeprint', () => finishScan(false));
+          window.matchMedia('print').addEventListener?.('change', (event) => {
+            if (event.matches) finishScan(false);
+          });
+
           // Cancela somente a animação de retorno que estiver em andamento
           const cancelReturnAnimation = () => {
             if (returnAnimationFrame !== null) {
@@ -239,6 +312,7 @@ if (viewer) {
 
           // Interrompe o giro automático assim que o visitante manipula a peça
           const stopAutomaticRotation = () => {
+            finishScan(false);
             window.clearTimeout(idleTimer);
             idleTimer = null;
             cancelReturnAnimation();
@@ -483,10 +557,12 @@ if (viewer) {
             if (typeof window.IntersectionObserver === 'function') {
               visibilityObserver = new IntersectionObserver(([entry]) => {
                 viewerVisible = entry?.isIntersecting ?? true;
+                if (!viewerVisible && scanEffect) finishScan();
+                if (viewerVisible) startScanIfVisible();
                 syncAutoRotationLoop();
               }, {
                 threshold: 0,
-                rootMargin: '120px 0px'
+                rootMargin: '0px'
               });
 
               visibilityObserver.observe(viewer);
@@ -500,12 +576,15 @@ if (viewer) {
 
           // Pausa e retoma o giro conforme a visibilidade da aba
           document.addEventListener('visibilitychange', () => {
+            if (document.hidden && scanEffect) finishScan();
+            if (!document.hidden) startScanIfVisible();
             syncAutoRotationLoop();
           });
 
           // Acompanha alterações da preferência de movimento sem recarregar a página
           const handleReducedMotionChange = (event) => {
             prefersReducedMotion = event.matches;
+            if (prefersReducedMotion) finishScan(false);
             window.clearTimeout(idleTimer);
             idleTimer = null;
             cancelReturnAnimation();
@@ -568,6 +647,7 @@ if (viewer) {
             stopAutoRotationLoop();
             modelReady = false;
             viewerFailed = true;
+            finishScan(false);
             controls.autoRotate = false;
             controls.enabled = false;
             showError(error);
@@ -816,8 +896,20 @@ if (viewer) {
                     : 'Pausar rotação';
                 }
 
-                render(true);
-                setAutomaticRotation(true);
+                if (scanModule?.createModelScan && !prefersReducedMotion && !window.matchMedia('print').matches) {
+                  pendingScan = mesh;
+                  mesh.visible = false;
+                  if (motionToggle) motionToggle.hidden = true;
+                  if (modelHint) modelHint.hidden = true;
+                  viewer.dataset.scanState = 'pending';
+                  startScanIfVisible();
+                } else {
+                  viewer.dataset.scanState = 'skipped';
+                }
+                if (!scanEffect) {
+                  render(true);
+                  setAutomaticRotation(true);
+                }
               } catch (error) {
                 geometry.dispose();
                 failViewer(error);
@@ -832,6 +924,7 @@ if (viewer) {
           const keyboardRotation = new THREE.Quaternion();
 
           viewer.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && scanEffect) { finishScan(); return; }
             if (
               event.target !== viewer
               || event.altKey

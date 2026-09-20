@@ -101,6 +101,9 @@
           <p class="model-hint" id="model-instructions" hidden><span aria-hidden="true">↻</span> Arraste ou use as setas para girar</p>
           <!-- Permite interromper a rotação automática sem bloquear o giro manual -->
           <button class="model-motion-toggle" type="button" aria-pressed="false" hidden>Pausar rotação</button>
+          <!-- A digitalização pode ser concluída sem aguardar a animação. -->
+          <p class="model-hint" data-scan-status role="status" hidden>Digitalizando em 3D…</p>
+          <button class="model-motion-toggle" data-scan-skip type="button" hidden>Concluir digitalização</button>
         </div>
         <span class="axis" aria-hidden="true">● &nbsp; X &nbsp; Y &nbsp; Z</span>
       </div>
@@ -723,7 +726,7 @@
   <!-- A navegação funciona antes do visualizador e das bibliotecas de animação. -->
   <script src="script.js?v=7" defer></script>
   <!-- Controla o carregamento e a interação com o modelo STL -->
-  <script type="module" src="model-viewer.js?v=11"></script>
+  <script type="module" src="model-viewer.js?v=12"></script>
   <!-- Bibliotecas leves utilizadas exclusivamente nas animações progressivas -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>

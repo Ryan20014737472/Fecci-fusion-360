@@ -578,11 +578,42 @@ Não são criadas camadas com `will-change` em todos os elementos da página.
 
 ## 18. Como funciona o modelo 3D
 
-O visualizador é formado por três partes:
+O visualizador é formado por quatro partes:
 
 1. `index.html` contém o `<canvas>` onde a cena aparece;
 2. `style.css` define o tamanho e a aparência da área;
-3. `model-viewer.js` carrega o STL e controla câmera, materiais, luzes e interação.
+3. `model-viewer.js` carrega o STL e controla câmera, materiais, luzes e interação;
+4. `assets/js/model-scan.js` cria a digitalização de entrada e libera seus recursos ao terminar.
+
+### Digitalização laranja de entrada
+
+Uma faixa de luz revela o STL de baixo para cima, acompanhada de partículas
+laranjas que se aproximam de pontos da superfície. O corpo laranja e as letras
+brancas originais reaparecem à medida que a faixa passa. O efeito acontece uma
+vez por carregamento da página, na primeira visualização da peça.
+
+Configurações no começo de `assets/js/model-scan.js`:
+
+```js
+const duration = compact ? 2200 : 2600;
+const particleCount = compact ? 450 : 1200;
+```
+
+O modo compacto atende telas de até 800 px ou ponteiro de toque e limita as
+atualizações visuais do scanner a 30 por segundo. Não aumente a quantidade de
+partículas sem testar em um aparelho modesto. A cor do scanner é `#ff6a21`;
+alterá-la não muda os materiais finais da peça.
+
+- Arrastar, usar as setas, pressionar Escape ou clicar em **Concluir digitalização** revela a peça imediatamente.
+- A rotação automática começa após a digitalização; o retorno após 5 segundos sem interação permanece.
+- Movimento reduzido, economia de dados (`saveData`) e impressão dispensam o efeito.
+- Ao sair da área visível ou ocultar a aba durante a varredura, ela é concluída e não reinicia ao voltar.
+- O módulo é opcional: se não carregar em até 1,5 segundo, o modelo normal continua disponível.
+- `dispose()` remove partículas, faixa, geometrias, materiais temporários e recorte, restaurando as sombras.
+
+Não coloque código dessa animação em `animations.js`: esse arquivo cuida da
+interface e dos textos, não do canvas 3D. Ao editar `model-scan.js`, aumente seu
+`?v=` na importação em `model-viewer.js` e a versão do visualizador no HTML.
 
 ### Arquivo carregado
 
@@ -690,7 +721,7 @@ O HTML carrega os arquivos com sufixos como:
 ```html
 <link rel="stylesheet" href="style.css?v=35">
 <script src="script.js?v=7" defer></script>
-<script type="module" src="model-viewer.js?v=11"></script>
+<script type="module" src="model-viewer.js?v=12"></script>
 <script src="assets/js/animations.js?v=6"></script>
 ```
 
@@ -699,7 +730,7 @@ O parâmetro `?v=` ajuda a impedir que o navegador continue usando uma versão a
 Após mudar um desses arquivos, aumente seu número:
 
 - `style.css?v=35` → `style.css?v=36`;
-- `model-viewer.js?v=11` → `model-viewer.js?v=12`;
+- `model-viewer.js?v=12` → `model-viewer.js?v=13`;
 - `script.js?v=7` → `script.js?v=8`;
 - `animations.js?v=6` → `animations.js?v=7`.
 
