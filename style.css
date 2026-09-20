@@ -1800,25 +1800,20 @@ h2 {
 
 .journal-cover {
   min-height: 390px;
-  padding: clamp(34px, 5vw, 62px);
+  padding: 20px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  background:
-    linear-gradient(145deg, rgba(255, 106, 33, 0.95), rgba(184, 77, 24, 0.94)),
-    #ff6a21;
-  color: #111;
+  align-items: center;
+  justify-content: center;
+  background: #101214;
 }
 
-.journal-cover > span {
-  font: 800 10px monospace;
-  letter-spacing: 0.16em;
-}
-
-.journal-cover strong {
-  font-size: clamp(64px, 8vw, 118px);
-  line-height: 0.82;
-  letter-spacing: -0.075em;
+/* Mostra a capa completa, sem recortar ou distorcer a imagem enviada. */
+.journal-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+  object-fit: contain;
 }
 
 .journal-copy {
